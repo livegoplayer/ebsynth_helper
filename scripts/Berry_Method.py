@@ -332,7 +332,7 @@ def generate_squares_to_folder (video_path, fps, batch_size,resolution,size_size
 
 def merge_image_to_squares(images, resolution, row_sides, rol_sides, output_folder):
 
-    texture_height, texture_width = images[0].shape[:2]
+    # texture_height, texture_width = images[0].shape[:2]
     frames_per_image = row_sides * rol_sides
 
     bigbatches =[images[i:i+frames_per_image] for i in range(0, len(images))][:len(images) / frames_per_image]
