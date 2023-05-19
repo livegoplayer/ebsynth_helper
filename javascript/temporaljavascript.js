@@ -11,7 +11,7 @@ function switch_to_temporal_kit_final2() {
     // Switch to the "temporal-kit" tab and the "final" subtab
 
     switch_to_temporal_kit_final();
-    const tabList = document.querySelector("#TemporalKit-Tab");
+    const tabList = document.querySelector("#EbsynthHelper-Tab");
 
     if (tabList) {
         const firstChild = tabList.firstElementChild;
