@@ -188,8 +188,7 @@ def post_process_ebsynth(input_folder,video,fps,per_side,output_resolution,batch
                                     max_frames=max_frames, output_folder=os.path.dirname(folder_video),
                                     border=border_frames)
 
-def split_square_images_to_singles(keys_rel_dir, square_text_dir, row_sides, rol_sides, _smol_resolution,
-                                   output_folder):
+def split_square_images_to_singles(keys_rel_dir, square_text_dir, row_sides, rol_sides, _smol_resolution, output_folder):
     square_textures = read_images_folder(square_text_dir)
     ebsynth.split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_resolution,output_folder, square_textures)
     return
@@ -586,13 +585,13 @@ def explode_tab():
                             with gr.Row():
                                 output_folder = gr.Textbox(label="Output Folder", placeholder="输出目录，没有会自动创建，有会清空")
                             with gr.Row():
-                                keys_rel_dir = gr.Textbox(label="Output Folder", placeholder="用于对标的文件夹，存储生成文件的对标文件，用于对标文件名称，没有就从0开始算")
+                                keys_rel_dir = gr.Textbox(label="keys_rel_dir", placeholder="用于对标的文件夹，存储生成文件的对标文件，用于对标文件名称，没有就从0开始算")
                             with gr.Row():
-                                row_sides = gr.Number(label="per side",value=2,precision=1)
-                                rol_sides = gr.Number(label="per side",value=2,precision=1)
+                                row_sides = gr.Number(label="row_sides",value=2,precision=1)
+                                rol_sides = gr.Number(label="rol_sides",value=2,precision=1)
                                 output_resolution = gr.Number(label="output resolution",value=1024,precision=1)
                             with gr.Row():
-                                runButton = gr.Button("start combine", elem_id="run_button")
+                                runButton = gr.Button("start explode", elem_id="run_button")
             with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Output"):

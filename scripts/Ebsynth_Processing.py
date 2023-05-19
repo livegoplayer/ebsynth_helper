@@ -107,6 +107,7 @@ def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_res
     from os import walk
 
     f = []
+    print("正在解析key_rel 目录")
     if len(keys_rel_dir) > 0:
         layer = 1
         w = walk(keys_rel_dir, topdown=False)  # 优先遍历顶层目录
@@ -116,6 +117,8 @@ def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_res
             for name in filenames:
                 f.append(os.path.join(keys_rel_dir, name))
             layer += 1
+    else:
+        print("key_rel 目录为空，自动编号")
     file_list = sorted(f)
 
     last_index = 0
