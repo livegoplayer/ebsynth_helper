@@ -339,9 +339,10 @@ def merge_image_to_squares(images, resolution, row_sides, rol_sides, output_fold
     # 最后几个组成一个新的batch
     bigbatches[-1] += images[-(len(images) % frames_per_image):]
     square_textures = []
+    index = 0
     for keyframes in bigbatches:
         square_texture = create_square_texture_2(keyframes, resolution, row_sides, rol_sides)
-        save_square_texture(square_texture, output_folder)
+        save_square_texture(square_texture, os.path.join(output_folder, str(index) + ".png"))
         square_textures.append(square_texture)
 
     return square_textures
