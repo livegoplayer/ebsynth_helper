@@ -130,7 +130,7 @@ def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_res
 
         # 存储逻辑
         if os.path.exists(output_folder):
-            os.remove(output_folder)
+            os.removedirs(output_folder)
         os.makedirs(output_folder)
         for frame_to_save in new_frames:
             if last_index < len(file_list):
