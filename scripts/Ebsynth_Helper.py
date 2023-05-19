@@ -121,6 +121,10 @@ def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_res
         print("key_rel 目录为空，自动编号")
     file_list = sorted(f)
 
+    if os.path.exists(output_folder):
+        os.removedirs(output_folder)
+    os.makedirs(output_folder)
+
     last_index = 0
     for square_texture in square_textures:
         resized_square_texture = cv2.resize(square_texture, (texture_width, texture_height),
@@ -129,9 +133,7 @@ def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_res
                                             _smol_resolution)
 
         # 存储逻辑
-        if os.path.exists(output_folder):
-            os.removedirs(output_folder)
-        os.makedirs(output_folder)
+
         for frame_to_save in new_frames:
             if last_index < len(file_list):
                 frame_name = file_list[last_index]
