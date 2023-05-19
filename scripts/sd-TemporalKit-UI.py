@@ -441,138 +441,138 @@ def show_textbox(option):
     else:
         return False
 
-def create_diffusing_tab ():
-    global diffuseimg
-    with gr.Column(visible=True, elem_id="Processid") as second_panel:
-        dummy_component = gr.Label(visible=False)
-        with gr.Row():
-            with gr.Tabs(elem_id="mode_EbsyntHelper"):
-                with gr.Row():
-                    with gr.Tab(elem_id="input_diffuse", label="Generate"):
-                        with gr.Column():
-                            with gr.Row():
-                                input_image = gr.Image(label="Input_Image", elem_id="input_page2")
-                                input_video = gr.Video(label="Input Video", elem_id="input_videopage2")
-                            with gr.Row():
-                                read_last_settings = gr.Button("read_last_settings", elem_id="read_last_settings")
-                                read_last_image = gr.Button("read_last_image", elem_id="read_last_image")
-                            with gr.Row():
-                                fps = gr.Number(label="FPS",value=10,precision=1)
-                                per_side = gr.Number(label="per side",value=3,precision=1)
-                                output_resolution_single = gr.Number(label="output height resolution",value=1024,precision=1)
-                                batch_size_diffuse = gr.Number(label="batch size",value=10,precision=1)
-                            with gr.Row():
-                                runButton = gr.Button("run", elem_id="run_button")
+# def create_diffusing_tab ():
+#     global diffuseimg
+#     with gr.Column(visible=True, elem_id="Processid") as second_panel:
+#         dummy_component = gr.Label(visible=False)
+#         with gr.Row():
+#             with gr.Tabs(elem_id="mode_EbsyntHelper"):
+#                 with gr.Row():
+#                     with gr.Tab(elem_id="input_diffuse", label="Generate"):
+#                         with gr.Column():
+#                             with gr.Row():
+#                                 input_image = gr.Image(label="Input_Image", elem_id="input_page2")
+#                                 input_video = gr.Video(label="Input Video", elem_id="input_videopage2")
+#                             with gr.Row():
+#                                 read_last_settings = gr.Button("read_last_settings", elem_id="read_last_settings")
+#                                 read_last_image = gr.Button("read_last_image", elem_id="read_last_image")
+#                             with gr.Row():
+#                                 fps = gr.Number(label="FPS",value=10,precision=1)
+#                                 per_side = gr.Number(label="per side",value=3,precision=1)
+#                                 output_resolution_single = gr.Number(label="output height resolution",value=1024,precision=1)
+#                                 batch_size_diffuse = gr.Number(label="batch size",value=10,precision=1)
+#                             with gr.Row():
+#                                 runButton = gr.Button("run", elem_id="run_button")
+#
+#
+#             with gr.Tabs(elem_id="mode_EbsyntHelper"):
+#                 with gr.Row():
+#                     with gr.Tab(elem_id="input_diffuse", label="Output"):
+#                         with gr.Column():
+#                             #newbutton = gr.Button("update", elem_id="update_button")
+#                             outputfile = gr.Video()
+#
+#         read_last_image.click(
+#         fn=update_image,
+#         outputs=input_image
+#         )
+#         read_last_settings.click(
+#         fn=update_settings,
+#         outputs=[fps,per_side,batch_size_diffuse,input_video]
+#         )
+#         runButton.click(
+#         fn=apply_image_to_video,
+#         inputs=[input_image, input_video,fps,per_side,output_resolution_single,batch_size_diffuse],
+#         outputs=outputfile
+#         )
 
 
-            with gr.Tabs(elem_id="mode_EbsyntHelper"):
-                with gr.Row():
-                    with gr.Tab(elem_id="input_diffuse", label="Output"):
-                        with gr.Column():
-                            #newbutton = gr.Button("update", elem_id="update_button")
-                            outputfile = gr.Video()
-
-        read_last_image.click(
-        fn=update_image,
-        outputs=input_image
-        )
-        read_last_settings.click(
-        fn=update_settings,
-        outputs=[fps,per_side,batch_size_diffuse,input_video]
-        )
-        runButton.click(
-        fn=apply_image_to_video,
-        inputs=[input_image, input_video,fps,per_side,output_resolution_single,batch_size_diffuse],
-        outputs=outputfile
-        )
-
-
-def create_batch_tab ():
-    with gr.Column(visible=True, elem_id="batch_process") as second_panel:
-        with gr.Row():
-            with gr.Tabs(elem_id="mode_EbsyntHelper"):
-                with gr.Row():
-                    with gr.Tab(elem_id="input_diffuse", label="Generate Batch"):
-                        with gr.Column():
-                            with gr.Row():
-                                input_folder = gr.Textbox(label="Input Folder",placeholder="the whole folder, generated before, not just the output folder")
-                                input_video = gr.Video(label="Input Video", elem_id="input_videopage2")
-                            with gr.Row():
-                                read_last_settings = gr.Button("read_last_settings", elem_id="read_last_settings")
-                            with gr.Row():
-                                fps = gr.Number(label="FPS",value=10,precision=1)
-                                per_side = gr.Number(label="per side",value=3,precision=1)
-                                output_resolution_batch = gr.Number(label="output resolution",value=1024,precision=1)
-                                batch_size = gr.Number(label="batch size",value=5,precision=1)
-                                max_frames = gr.Number(label="max frames",value=100,precision=1)
-                                border_frames = gr.Number(label="border frames",value=1,precision=1)
-                            with gr.Row():
-                                runButton = gr.Button("run", elem_id="run_button")
+# def create_batch_tab ():
+#     with gr.Column(visible=True, elem_id="batch_process") as second_panel:
+#         with gr.Row():
+#             with gr.Tabs(elem_id="mode_EbsyntHelper"):
+#                 with gr.Row():
+#                     with gr.Tab(elem_id="input_diffuse", label="Generate Batch"):
+#                         with gr.Column():
+#                             with gr.Row():
+#                                 input_folder = gr.Textbox(label="Input Folder",placeholder="the whole folder, generated before, not just the output folder")
+#                                 input_video = gr.Video(label="Input Video", elem_id="input_videopage2")
+#                             with gr.Row():
+#                                 read_last_settings = gr.Button("read_last_settings", elem_id="read_last_settings")
+#                             with gr.Row():
+#                                 fps = gr.Number(label="FPS",value=10,precision=1)
+#                                 per_side = gr.Number(label="per side",value=3,precision=1)
+#                                 output_resolution_batch = gr.Number(label="output resolution",value=1024,precision=1)
+#                                 batch_size = gr.Number(label="batch size",value=5,precision=1)
+#                                 max_frames = gr.Number(label="max frames",value=100,precision=1)
+#                                 border_frames = gr.Number(label="border frames",value=1,precision=1)
+#                             with gr.Row():
+#                                 runButton = gr.Button("run", elem_id="run_button")
+#
+#
+#
+#             with gr.Tabs(elem_id="mode_EbsyntHelper"):
+#                 with gr.Row():
+#                     with gr.Tab(elem_id="input_diffuse", label="Output"):
+#                         with gr.Column():
+#                             #newbutton = gr.Button("update", elem_id="update_button")
+#                             outputfile = gr.Video()
+#
+#         read_last_settings.click(
+#         fn=update_settings_from_file,
+#         inputs=[input_folder],
+#         outputs=[fps,per_side,batch_size,input_video,max_frames,border_frames]
+#         )
+#         runButton.click(
+#         fn=apply_image_to_vide_batch,
+#         inputs=[input_folder,input_video,fps,per_side,output_resolution_batch,batch_size,max_frames,border_frames],
+#         outputs=outputfile
+#         )
 
 
-
-            with gr.Tabs(elem_id="mode_EbsyntHelper"):
-                with gr.Row():
-                    with gr.Tab(elem_id="input_diffuse", label="Output"):
-                        with gr.Column():
-                            #newbutton = gr.Button("update", elem_id="update_button")
-                            outputfile = gr.Video()
-
-        read_last_settings.click(
-        fn=update_settings_from_file,
-        inputs=[input_folder],
-        outputs=[fps,per_side,batch_size,input_video,max_frames,border_frames]
-        )
-        runButton.click(
-        fn=apply_image_to_vide_batch,
-        inputs=[input_folder,input_video,fps,per_side,output_resolution_batch,batch_size,max_frames,border_frames],
-        outputs=outputfile
-        )
-
-
-def create_ebsynth_tab():
-    with gr.Column(visible=True, elem_id="batch_process") as second_panel:
-        with gr.Row():
-            with gr.Tabs(elem_id="mode_EbsyntHelper"):
-                with gr.Row():
-                    with gr.Tab(elem_id="input_diffuse", label="Generate Batch"):
-                        with gr.Column():
-                            with gr.Row():
-                                input_folder = gr.Textbox(label="Input Folder",placeholder="the whole folder, generated before, not just the output folder")
-                                input_video = gr.Video(label="Input Video", elem_id="input_videopage2")
-                            with gr.Row():
-                                read_last_settings_synth = gr.Button("read_last_settings", elem_id="read_last_settings")
-                            with gr.Row():
-                                fps = gr.Number(label="FPS",value=10,precision=1)
-                                per_side = gr.Number(label="per side",value=3,precision=1)
-                                output_resolution_batch = gr.Number(label="output resolution",value=1024,precision=1)
-                                batch_size = gr.Number(label="batch size",value=5,precision=1)
-                                max_frames = gr.Number(label="max frames",value=100,precision=1)
-                                border_frames = gr.Number(value=1, label="Border Frames", precision=1, interactive=True,placeholder="border frames")
-                            with gr.Row():
-                                runButton = gr.Button("prepare ebsynth", elem_id="run_button")
-                                recombineButton = gr.Button("recombine ebsynth", elem_id="recombine_button")
-            with gr.Tabs(elem_id="mode_EbsyntHelper"):
-                with gr.Row():
-                    with gr.Tab(elem_id="input_diffuse", label="Output"):
-                        with gr.Column():
-                            #newbutton = gr.Button("update", elem_id="update_button")
-                            outputvideo = gr.File()
-        read_last_settings_synth.click(
-        fn=update_settings_from_file,
-        inputs=[input_folder],
-        outputs=[fps,per_side,batch_size,input_video,max_frames,border_frames]
-        )
-        runButton.click(
-        fn=post_process_ebsynth,
-        inputs=[input_folder,input_video,fps,per_side,output_resolution_batch,batch_size,max_frames,border_frames],
-        outputs=outputvideo
-        )
-        recombineButton.click(
-        fn=recombine_ebsynth,
-        inputs=[input_folder,fps,border_frames,batch_size],
-        outputs=outputvideo
-        )
+# def create_ebsynth_tab():
+#     with gr.Column(visible=True, elem_id="batch_process") as second_panel:
+#         with gr.Row():
+#             with gr.Tabs(elem_id="mode_EbsyntHelper"):
+#                 with gr.Row():
+#                     with gr.Tab(elem_id="input_diffuse", label="Generate Batch"):
+#                         with gr.Column():
+#                             with gr.Row():
+#                                 input_folder = gr.Textbox(label="Input Folder",placeholder="the whole folder, generated before, not just the output folder")
+#                                 input_video = gr.Video(label="Input Video", elem_id="input_videopage2")
+#                             with gr.Row():
+#                                 read_last_settings_synth = gr.Button("read_last_settings", elem_id="read_last_settings")
+#                             with gr.Row():
+#                                 fps = gr.Number(label="FPS",value=10,precision=1)
+#                                 per_side = gr.Number(label="per side",value=3,precision=1)
+#                                 output_resolution_batch = gr.Number(label="output resolution",value=1024,precision=1)
+#                                 batch_size = gr.Number(label="batch size",value=5,precision=1)
+#                                 max_frames = gr.Number(label="max frames",value=100,precision=1)
+#                                 border_frames = gr.Number(value=1, label="Border Frames", precision=1, interactive=True,placeholder="border frames")
+#                             with gr.Row():
+#                                 runButton = gr.Button("prepare ebsynth", elem_id="run_button")
+#                                 recombineButton = gr.Button("recombine ebsynth", elem_id="recombine_button")
+#             with gr.Tabs(elem_id="mode_EbsyntHelper"):
+#                 with gr.Row():
+#                     with gr.Tab(elem_id="input_diffuse", label="Output"):
+#                         with gr.Column():
+#                             #newbutton = gr.Button("update", elem_id="update_button")
+#                             outputvideo = gr.File()
+#         read_last_settings_synth.click(
+#         fn=update_settings_from_file,
+#         inputs=[input_folder],
+#         outputs=[fps,per_side,batch_size,input_video,max_frames,border_frames]
+#         )
+#         runButton.click(
+#         fn=post_process_ebsynth,
+#         inputs=[input_folder,input_video,fps,per_side,output_resolution_batch,batch_size,max_frames,border_frames],
+#         outputs=outputvideo
+#         )
+#         recombineButton.click(
+#         fn=recombine_ebsynth,
+#         inputs=[input_folder,fps,border_frames,batch_size],
+#         outputs=outputvideo
+#         )
 
 def explode_tab():
     with gr.Column(visible=True, elem_id="batch_process") as second_panel:
