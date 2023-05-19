@@ -431,7 +431,7 @@ def create_video_Processing_Tab():
                 except:
                     print("failed")
                     pass
-    parameters_copypaste.add_paste_fields("TemporalKit", result_image,None)
+    parameters_copypaste.add_paste_fields("EbsynthHelper", result_image,None)
     runbutton.click(preprocess_video, [video,fps,batch_size,sides,resolution,batch_checkbox,max_keyframes,batch_folder,border_frames,ebsynth_mode,split_video,split_based_on_cuts], result_image)
 
 
@@ -634,21 +634,21 @@ def merge_tab():
         outputs=outputFirstImage
         )
 
-tabs_list = ["TemporalKit"]
+tabs_list = ["EbsynthHelper"]
 
 def on_ui_tabs():
 
-    with gr.Blocks(analytics_enabled=False) as temporalkit:
-        with gr.Tabs(elem_id="TemporalKit-Tab") as tabs:
+    with gr.Blocks(analytics_enabled=False) as EbsynthHelper:
+        with gr.Tabs(elem_id="EbsynthHelper-Tab") as tabs:
                 with gr.Tab(label="Pre-Processing"):
                     with gr.Blocks(analytics_enabled=False):
                         create_video_Processing_Tab()
-                with gr.Tab(label="Temporal-Warp",elem_id="processbutton"):
-                    with gr.Blocks(analytics_enabled=False):
-                        create_diffusing_tab()
-                with gr.Tab(label="Batch-Warp",elem_id="batch-button"):
-                    with gr.Blocks(analytics_enabled=False):
-                        create_batch_tab()
+                # with gr.Tab(label="Temporal-Warp",elem_id="processbutton"):
+                #     with gr.Blocks(analytics_enabled=False):
+                #         create_diffusing_tab()
+                # with gr.Tab(label="Batch-Warp",elem_id="batch-button"):
+                #     with gr.Blocks(analytics_enabled=False):
+                #         create_batch_tab()
                 with gr.Tab(label="Ebsynth-Process",elem_id="Ebsynth-Process"):
                     with gr.Blocks(analytics_enabled=False):
                         create_ebsynth_tab()
@@ -658,7 +658,7 @@ def on_ui_tabs():
                 with gr.Tab(label="Ebsynth-Merge-Helper",elem_id="Ebsynth-Merge-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         merge_tab()
-        return (temporalkit, "Temporal-Kit", "TemporalKit"),
+        return (EbsynthHelper, "Ebsynth-Helper", "EbsynthHelper"),
 
 
 
@@ -686,7 +686,7 @@ def generate(
 
 
 def on_ui_settings():
-    section = ('TemporalKit', "Temporal-Kit")
+    section = ('EbsynthHelper', "Ebsynth-Helper")
     shared.opts.add_option("def_img_cfg", shared.OptionInfo("1.5", "Default Image CFG", section=('ip2p', "Instruct-pix2pix")))
 
 
