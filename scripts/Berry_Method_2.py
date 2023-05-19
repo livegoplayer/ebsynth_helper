@@ -345,7 +345,7 @@ def merge_image_to_squares(images, resolution, row_sides, rol_sides, output_fold
     # 最后几个组成一个新的batch
     print(len(bigbatches))
     bigbatches.append(images[-(len(images) % frames_per_image):])
-    print(len(bigbatches), (len(images) % frames_per_image))
+    print(len(bigbatches), len(images), frames_per_image)
     square_textures = []
     index = 0
     for keyframes in bigbatches:
