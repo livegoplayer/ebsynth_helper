@@ -381,9 +381,9 @@ def create_video_Processing_Tab():
     with gr.Column(visible=True, elem_id="Temporal_Kit") as main_panel:
         dummy_component = gr.Label(visible=False)
         with gr.Row():
-            with gr.Tabs(elem_id="mode_TemporalKit"):
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
-                    with gr.Tab(elem_id="input_TemporalKit", label="Input"):
+                    with gr.Tab(elem_id="input_EbsyntHelper", label="Input"):
                         with gr.Row():
                             with gr.Column():
                                 video = gr.Video(label="Input Video", elem_id="input_video",type="filepath")
@@ -417,8 +417,8 @@ def create_video_Processing_Tab():
                 fn=save_settings,
                 inputs=[fps,sides,batch_size,video]
             )
-            with gr.Tabs(elemn_id="TemporalKit_gallery_container"):
-                with gr.TabItem(elem_id="output_TemporalKit", label="Output"):
+            with gr.Tabs(elemn_id="EbsyntHelper_gallery_container"):
+                with gr.TabItem(elem_id="output_EbsyntHelper", label="Output"):
                     with gr.Row():
                         result_image = gr.outputs.Image(type='pil')
                     with gr.Row():
@@ -446,7 +446,7 @@ def create_diffusing_tab ():
     with gr.Column(visible=True, elem_id="Processid") as second_panel:
         dummy_component = gr.Label(visible=False)
         with gr.Row():
-            with gr.Tabs(elem_id="mode_TemporalKit"):
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Generate"):
                         with gr.Column():
@@ -465,7 +465,7 @@ def create_diffusing_tab ():
                                 runButton = gr.Button("run", elem_id="run_button")
 
 
-            with gr.Tabs(elem_id="mode_TemporalKit"):
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Output"):
                         with gr.Column():
@@ -490,7 +490,7 @@ def create_diffusing_tab ():
 def create_batch_tab ():
     with gr.Column(visible=True, elem_id="batch_process") as second_panel:
         with gr.Row():
-            with gr.Tabs(elem_id="mode_TemporalKit"):
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Generate Batch"):
                         with gr.Column():
@@ -511,7 +511,7 @@ def create_batch_tab ():
 
 
 
-            with gr.Tabs(elem_id="mode_TemporalKit"):
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Output"):
                         with gr.Column():
@@ -533,7 +533,7 @@ def create_batch_tab ():
 def create_ebsynth_tab():
     with gr.Column(visible=True, elem_id="batch_process") as second_panel:
         with gr.Row():
-            with gr.Tabs(elem_id="mode_TemporalKit"):
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Generate Batch"):
                         with gr.Column():
@@ -552,7 +552,7 @@ def create_ebsynth_tab():
                             with gr.Row():
                                 runButton = gr.Button("prepare ebsynth", elem_id="run_button")
                                 recombineButton = gr.Button("recombine ebsynth", elem_id="recombine_button")
-            with gr.Tabs(elem_id="mode_TemporalKit"):
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Output"):
                         with gr.Column():
@@ -577,7 +577,7 @@ def create_ebsynth_tab():
 def explode_tab():
     with gr.Column(visible=True, elem_id="batch_process") as second_panel:
         with gr.Row():
-            with gr.Tabs(elem_id="mode_TemporalKit"):
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Generate"):
                         with gr.Column():
@@ -593,7 +593,7 @@ def explode_tab():
                                 output_resolution = gr.Number(label="output resolution",value=1024,precision=1)
                             with gr.Row():
                                 runButton = gr.Button("start combine", elem_id="run_button")
-            with gr.Tabs(elem_id="mode_TemporalKit"):
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Output"):
                         with gr.Column():
@@ -608,7 +608,7 @@ def explode_tab():
 def merge_tab():
     with gr.Column(visible=True, elem_id="batch_process") as second_panel:
         with gr.Row():
-            with gr.Tabs(elem_id="mode_TemporalKit"):
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Generate"):
                         with gr.Column():
@@ -622,7 +622,7 @@ def merge_tab():
                                 output_resolution = gr.Number(label="output resolution",value=1024,precision=1)
                             with gr.Row():
                                 runButton = gr.Button("start combine", elem_id="run_button")
-            with gr.Tabs(elem_id="mode_TemporalKit"):
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Output"):
                         with gr.Column():
@@ -640,18 +640,18 @@ def on_ui_tabs():
 
     with gr.Blocks(analytics_enabled=False) as EbsynthHelper:
         with gr.Tabs(elem_id="EbsynthHelper-Tab") as tabs:
-                with gr.Tab(label="Pre-Processing"):
-                    with gr.Blocks(analytics_enabled=False):
-                        create_video_Processing_Tab()
+                # with gr.Tab(label="Pre-Processing"):
+                #     with gr.Blocks(analytics_enabled=False):
+                #         create_video_Processing_Tab()
                 # with gr.Tab(label="Temporal-Warp",elem_id="processbutton"):
                 #     with gr.Blocks(analytics_enabled=False):
                 #         create_diffusing_tab()
                 # with gr.Tab(label="Batch-Warp",elem_id="batch-button"):
                 #     with gr.Blocks(analytics_enabled=False):
                 #         create_batch_tab()
-                with gr.Tab(label="Ebsynth-Process",elem_id="Ebsynth-Process"):
-                    with gr.Blocks(analytics_enabled=False):
-                        create_ebsynth_tab()
+                # with gr.Tab(label="Ebsynth-Process",elem_id="Ebsynth-Process"):
+                #     with gr.Blocks(analytics_enabled=False):
+                #         create_ebsynth_tab()
                 with gr.Tab(label="Ebsynth-Explode-Helper",elem_id="Ebsynth-Explode-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         explode_tab()

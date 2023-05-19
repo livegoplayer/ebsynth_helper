@@ -1,4 +1,4 @@
-# TemporalKit
+# EbsyntHelper
 
 An all in one solution for adding Temporal Stability to a Stable Diffusion Render via an automatic1111 extension
 

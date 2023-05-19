@@ -1,6 +1,6 @@
 function switch_to_temporal_kit() {
     gradioApp().querySelector('#tabs').querySelectorAll('button')[6].click();
-   // gradioApp().getElementById('TemporalKit').querySelectorAll('button')[0].click();
+   // gradioApp().getElementById('EbsyntHelper').querySelectorAll('button')[0].click();
 }
 
 function switch_to_temporal_kit_final2() {

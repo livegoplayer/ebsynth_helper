@@ -34,7 +34,7 @@ def on_button_click():
 class Script(scripts.Script):
     global button
     def title(self):
-        return "TemporalKit"
+        return "EbsynthHelper"
 
     def show(self, is_img2img):
         if is_img2img:

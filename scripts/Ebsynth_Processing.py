@@ -7,7 +7,7 @@ from pprint import pprint
 import base64
 import numpy as np
 from io import BytesIO
-import extensions.TemporalKit.scripts.berry_utility
+import extensions.ebsynth_helper.scripts.berry_utility
 import scripts.optical_flow_simple as opflow
 from PIL import Image, ImageOps,ImageFilter
 import io
@@ -158,7 +158,7 @@ def recombine (video_path, fps, per_side, batch_size, fillindenoise, edgedenoise
     combined = bmethod.merge_image_batches(just_frame_groups, border)
 
     save_loc = os.path.join(output_folder, "non_blended.mp4")
-    generated_vid = extensions.TemporalKit.scripts.berry_utility.pil_images_to_video(combined,save_loc, fps)
+    generated_vid = extensions.EbsyntHelper.scripts.berry_utility.pil_images_to_video(combined,save_loc, fps)
 
 
 
@@ -236,7 +236,7 @@ def crossfade_folder_of_folders(output_folder, fps,return_generated_video_path=F
 
     print (f"outputting {len(output_images)} images")
     output_save_location = os.path.join(output_folder, "crossfade.mp4")
-    generated_vid = extensions.TemporalKit.scripts.berry_utility.pil_images_to_video(output_images, output_save_location, fps)
+    generated_vid = extensions.EbsyntHelper.scripts.berry_utility.pil_images_to_video(output_images, output_save_location, fps)
      
     if return_generated_video_path == True:
         return generated_vid
