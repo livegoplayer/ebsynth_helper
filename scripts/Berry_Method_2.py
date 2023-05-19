@@ -104,7 +104,6 @@ def create_square_texture_2(frames, resolution, row_sides, rol_sides):
             # print([resized_frame.shape[0], resized_frame.shape[1]])
             # print([texture.shape[0], texture.shape[1]])
             print([(row ,(row + 1)), (col,(col + 1) )])
-
             print([(row * frame_height,(row + 1) * frame_height) , (col * frame_width,(col + 1) * frame_width)])
 
             texture[row * frame_height:(row + 1) * frame_height, col * frame_width:(col + 1) * frame_width] = resized_frame
