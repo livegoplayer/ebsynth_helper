@@ -100,8 +100,8 @@ def sort_into_folders(video_path, fps, per_side, batch_size, _smol_resolution,sq
 # square_text_dir 存储gird图片的文件夹
 # row_sides 多少行
 # rol_sides 多少列
-def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_resolution,
-                                   output_folder, square_textures):
+
+def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_resolution, output_folder, square_textures):
     texture_height, texture_width = square_textures[0].shape[:2]
 
     from os import walk
@@ -145,106 +145,106 @@ def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_res
                                         output_path)
 
 
-def recombine (video_path, fps, per_side, batch_size, fillindenoise, edgedenoise, _smol_resolution,square_textures,max_frames,output_folder,border):
-    just_frame_groups = []
-    per_batch_limmit = (((per_side * per_side) * batch_size)) - border
-    video_data = bmethod.convert_video_to_bytes(video_path)
-    frames = bmethod.extract_frames_movpie(video_data, fps, max_frames)
-    bigbatches,frameLocs = bmethod.split_frames_into_big_batches(frames, per_batch_limmit,border,returnframe_locations=True)
-    bigprocessedbatches = []
-    for i in range(len(bigprocessedbatches)):
-        newgroup = []
-        for b in range(len(bigprocessedbatches[i])):
-            newgroup.append(bigprocessedbatches[i][b])
-        just_frame_groups.append(newgroup)
-
-    combined = bmethod.merge_image_batches(just_frame_groups, border)
-
-    save_loc = os.path.join(output_folder, "non_blended.mp4")
-    generated_vid = extensions.EbsyntHelper.scripts.berry_utility.pil_images_to_video(combined,save_loc, fps)
-
-
-
-
-def crossfade_folder_of_folders(output_folder, fps,return_generated_video_path=False):
-    """Crossfade between images in a folder of folders and save the results."""
-    root_folder = output_folder
-    all_dirs = [d for d in os.listdir(root_folder) if os.path.isdir(os.path.join(root_folder, d))]
-    dirs = [d for d in all_dirs if d.startswith("out_")]
-
-    dirs.sort()
-
-    output_images = []
-    allkeynums = getkeynums(os.path.join(root_folder, "keys"))
-    print(allkeynums)
-
-    for b in range(allkeynums[0]):
-        current_dir = os.path.join(root_folder, dirs[0])
-        images_current = sorted(os.listdir(current_dir))
-        image1_path = os.path.join(current_dir, images_current[b])
-        image1 = Image.open(image1_path)
-        output_images.append(np.array(image1))
-
-    for i in range(len(dirs) - 1):
-        current_dir = os.path.join(root_folder, dirs[i])
-        next_dir = os.path.join(root_folder, dirs[i + 1])
-
-        images_current = sorted(os.listdir(current_dir))
-        images_next = sorted(os.listdir(next_dir))
-
-        startnum = get_num_at_index(current_dir,0)
-        bigkeynum = allkeynums[i]
-        keynum = bigkeynum - startnum
-        print(f"recombining directory {dirs[i]} and {dirs[i+1]}, len {keynum}")
-        
+# def recombine (video_path, fps, per_side, batch_size, fillindenoise, edgedenoise, _smol_resolution,square_textures,max_frames,output_folder,border):
+#     just_frame_groups = []
+#     per_batch_limmit = (((per_side * per_side) * batch_size)) - border
+#     video_data = bmethod.convert_video_to_bytes(video_path)
+#     frames = bmethod.extract_frames_movpie(video_data, fps, max_frames)
+#     bigbatches,frameLocs = bmethod.split_frames_into_big_batches(frames, per_batch_limmit,border,returnframe_locations=True)
+#     bigprocessedbatches = []
+#     for i in range(len(bigprocessedbatches)):
+#         newgroup = []
+#         for b in range(len(bigprocessedbatches[i])):
+#             newgroup.append(bigprocessedbatches[i][b])
+#         just_frame_groups.append(newgroup)
+#
+#     combined = bmethod.merge_image_batches(just_frame_groups, border)
+#
+#     save_loc = os.path.join(output_folder, "non_blended.mp4")
+#     generated_vid = extensions.EbsyntHelper.scripts.berry_utility.pil_images_to_video(combined,save_loc, fps)
 
 
 
-        for j in range(keynum, len(images_current) - 1):
-            alpha = (j - keynum) / (len(images_current) - keynum)
-            image1_path = os.path.join(current_dir, images_current[j])
-            next_image_index = j - keynum if j - keynum < len(images_next) else len(images_next) - 1
-            image2_path = os.path.join(next_dir, images_next[next_image_index])
 
-            image1 = Image.open(image1_path)
-            image2 = Image.open(image2_path)
-
-            blended_image = butility.crossfade_images(image1, image2, alpha)
-            output_images.append(np.array(blended_image))
-            # blended_image.save(os.path.join(output_folder, f"{dirs[i]}_{dirs[i+1]}_crossfade_{j:04}.png"))
-
-    final_dir = os.path.join(root_folder, dirs[-1])
-    final_dir_images = sorted(os.listdir(final_dir))
-
-    # Find the index of the image with the last keyframe number in its name
-    last_keyframe_number = allkeynums[-1]
-    last_keyframe_index = None
-    for index, image_name in enumerate(final_dir_images):
-        number_in_name = int(''.join(filter(str.isdigit, image_name)))
-        if number_in_name == last_keyframe_number:
-            last_keyframe_index = index
-            break
-
-    if last_keyframe_index is not None:
-        print(f"going from dir {last_keyframe_number} to end at {len(final_dir_images)}")
-
-        # Iterate from the last keyframe number to the end
-        for c in range(last_keyframe_index, len(final_dir_images)):
-            image1_path = os.path.join(final_dir, final_dir_images[c])
-            image1 = Image.open(image1_path)
-            output_images.append(np.array(image1))
-    else:
-        print("Last keyframe not found in the final directory")
-        
-
-    print (f"outputting {len(output_images)} images")
-    output_save_location = os.path.join(output_folder, "crossfade.mp4")
-    generated_vid = extensions.EbsyntHelper.scripts.berry_utility.pil_images_to_video(output_images, output_save_location, fps)
-     
-    if return_generated_video_path == True:
-        return generated_vid
-    else: 
-        return output_images
+# def crossfade_folder_of_folders(output_folder, fps,return_generated_video_path=False):
+#     """Crossfade between images in a folder of folders and save the results."""
+#     root_folder = output_folder
+#     all_dirs = [d for d in os.listdir(root_folder) if os.path.isdir(os.path.join(root_folder, d))]
+#     dirs = [d for d in all_dirs if d.startswith("out_")]
+#
+#     dirs.sort()
+#
+#     output_images = []
+#     allkeynums = getkeynums(os.path.join(root_folder, "keys"))
+#     print(allkeynums)
+#
+#     for b in range(allkeynums[0]):
+#         current_dir = os.path.join(root_folder, dirs[0])
+#         images_current = sorted(os.listdir(current_dir))
+#         image1_path = os.path.join(current_dir, images_current[b])
+#         image1 = Image.open(image1_path)
+#         output_images.append(np.array(image1))
+#
+#     for i in range(len(dirs) - 1):
+#         current_dir = os.path.join(root_folder, dirs[i])
+#         next_dir = os.path.join(root_folder, dirs[i + 1])
+#
+#         images_current = sorted(os.listdir(current_dir))
+#         images_next = sorted(os.listdir(next_dir))
+#
+#         startnum = get_num_at_index(current_dir,0)
+#         bigkeynum = allkeynums[i]
+#         keynum = bigkeynum - startnum
+#         print(f"recombining directory {dirs[i]} and {dirs[i+1]}, len {keynum}")
+#
+#
+#
+#
+#         for j in range(keynum, len(images_current) - 1):
+#             alpha = (j - keynum) / (len(images_current) - keynum)
+#             image1_path = os.path.join(current_dir, images_current[j])
+#             next_image_index = j - keynum if j - keynum < len(images_next) else len(images_next) - 1
+#             image2_path = os.path.join(next_dir, images_next[next_image_index])
+#
+#             image1 = Image.open(image1_path)
+#             image2 = Image.open(image2_path)
+#
+#             blended_image = butility.crossfade_images(image1, image2, alpha)
+#             output_images.append(np.array(blended_image))
+#             # blended_image.save(os.path.join(output_folder, f"{dirs[i]}_{dirs[i+1]}_crossfade_{j:04}.png"))
+#
+#     final_dir = os.path.join(root_folder, dirs[-1])
+#     final_dir_images = sorted(os.listdir(final_dir))
+#
+#     # Find the index of the image with the last keyframe number in its name
+#     last_keyframe_number = allkeynums[-1]
+#     last_keyframe_index = None
+#     for index, image_name in enumerate(final_dir_images):
+#         number_in_name = int(''.join(filter(str.isdigit, image_name)))
+#         if number_in_name == last_keyframe_number:
+#             last_keyframe_index = index
+#             break
+#
+#     if last_keyframe_index is not None:
+#         print(f"going from dir {last_keyframe_number} to end at {len(final_dir_images)}")
+#
+#         # Iterate from the last keyframe number to the end
+#         for c in range(last_keyframe_index, len(final_dir_images)):
+#             image1_path = os.path.join(final_dir, final_dir_images[c])
+#             image1 = Image.open(image1_path)
+#             output_images.append(np.array(image1))
+#     else:
+#         print("Last keyframe not found in the final directory")
+#
+#
+#     print (f"outputting {len(output_images)} images")
+#     output_save_location = os.path.join(output_folder, "crossfade.mp4")
+#     generated_vid = extensions.EbsyntHelper.scripts.berry_utility.pil_images_to_video(output_images, output_save_location, fps)
+#
+#     if return_generated_video_path == True:
+#         return generated_vid
+#     else:
+#         return output_images
 
 def getkeynums (folder_path):
     filenames = os.listdir(folder_path)

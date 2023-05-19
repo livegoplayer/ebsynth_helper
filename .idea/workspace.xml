@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a96905a3-2c95-4644-b2a0-9a50edd44fbe" name="Changes" comment="1">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/Ebsynth_Processing.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Ebsynth_Processing.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/sd-TemporalKit-UI.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/sd-TemporalKit-UI.py" afterDir="false" />
     </list>
@@ -45,7 +46,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1684483070630</updated>
-      <workItem from="1684483071713" duration="1619000" />
+      <workItem from="1684483071713" duration="2649000" />
     </task>
     <task id="LOCAL-00001" summary="1">
       <created>1684483111224</created>
@@ -89,7 +90,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684484442761</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="1">
+      <created>1684484738366</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1684484738366</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
