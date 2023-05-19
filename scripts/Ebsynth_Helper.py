@@ -13,8 +13,8 @@ from PIL import Image, ImageOps,ImageFilter
 import io
 from collections import deque
 import cv2
-import scripts.Berry_Method as bmethod
-import scripts.berry_utility as butility
+import scripts.Berry_Method_2 as bmethod
+import scripts.berry_utility_2 as butility
 import re
 
 

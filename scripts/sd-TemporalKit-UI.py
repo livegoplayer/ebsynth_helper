@@ -37,12 +37,12 @@ from modules.generation_parameters_copypaste import quote
 from copy import deepcopy
 import platform
 import modules.generation_parameters_copypaste as parameters_copypaste
-import scripts.Berry_Method as General_SD
+import scripts.Berry_Method_2 as General_SD
 import glob
 import base64
 import io
 import scripts.Ebsynth_Helper as ebsynth
-import scripts.berry_utility as sd_utility
+import scripts.berry_utility_2 as sd_utility
 
 
 diffuseimg = None

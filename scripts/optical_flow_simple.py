@@ -3,7 +3,7 @@ import glob
 import cv2
 import numpy as np
 from PIL import Image
-import scripts.berry_utility as utilityb
+import scripts.berry_utility_2 as utilityb
 
 def read_image(file_path):
     image = cv2.imread(file_path, cv2.IMREAD_COLOR)
