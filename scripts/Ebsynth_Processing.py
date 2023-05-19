@@ -96,6 +96,51 @@ def sort_into_folders(video_path, fps, per_side, batch_size, _smol_resolution,sq
 
     return
 
+# keys_rel_dir 是相关的文件夹，用于对标输出文件的文件名，会从第一个开始对标，多了也不对标，少了也不对标，只按照顺序
+# square_text_dir 存储gird图片的文件夹
+# row_sides 多少行
+# rol_sides 多少列
+def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_resolution,
+                                   output_folder, square_textures):
+    texture_height, texture_width = square_textures[0].shape[:2]
+
+    from os import walk
+
+    f = []
+    if len(keys_rel_dir) > 0:
+        layer = 1
+        w = walk(keys_rel_dir, topdown=False)  # 优先遍历顶层目录
+        for (dirpath, dirnames, filenames) in w:
+            if layer == 2:
+                break
+            for name in filenames:
+                f.append(os.path.join(keys_rel_dir, name))
+            layer += 1
+    file_list = sorted(f)
+
+    last_index = 0
+    for i, square_texture in square_textures:
+        resized_square_texture = cv2.resize(square_texture, (texture_width, texture_height),
+                                            interpolation=cv2.INTER_LINEAR)
+        new_frames = bmethod.split_square_texture_2(resized_square_texture, row_sides, rol_sides,
+                                            _smol_resolution)
+
+        # 存储逻辑
+        if os.path.exists(output_folder):
+            os.remove(output_folder)
+        os.makedirs(output_folder)
+        for i, frame_to_save in new_frames:
+            if last_index < len(file_list):
+                frame_name = file_list[last_index]
+            else:
+                frame_name = str(last_index) + ".png"
+            last_index += 1
+            output_path = os.path.join(output_folder, frame_name)
+            print(f"saving {output_path}")
+
+            bmethod.save_square_texture(frame_to_save,
+                                        output_path)
+
 
 def recombine (video_path, fps, per_side, batch_size, fillindenoise, edgedenoise, _smol_resolution,square_textures,max_frames,output_folder,border):
     just_frame_groups = []

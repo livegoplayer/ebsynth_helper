@@ -473,6 +473,29 @@ def resize_to_nearest_multiple(width, height, a):
     new_height = nearest_common_multiple(height, a, 8)
     return int(new_width), int(new_height)
 
+def resize_to_nearest_multiple_2(width, height, row_sides, col_sides):
+    def nearest_common_multiple(target, a, b):
+        multiple = 1
+        nearest_multiple = 0
+        min_diff = float('inf')
+
+        while True:
+            current_multiple = a * multiple
+            if current_multiple % b == 0:
+                diff = abs(target - current_multiple)
+                if diff < min_diff:
+                    min_diff = diff
+                    nearest_multiple = current_multiple
+                else:
+                    break
+            multiple += 1
+
+        return nearest_multiple
+
+    new_width = nearest_common_multiple(width, col_sides, 8)
+    new_height = nearest_common_multiple(height, row_sides, 8)
+    return int(new_width), int(new_height)
+
 
 def delete_folder_contents(folder_path):
     for filename in os.listdir(folder_path):

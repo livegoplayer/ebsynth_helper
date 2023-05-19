@@ -126,6 +126,17 @@ def preprocess_video(video,fps,batch_size,per_side,resolution,batch_run,max_fram
     return processed
 
 
+def merge_image_to_square(images_dir, row_sides, rol_sides, resolution, output_path):
+    if os.path.exists(output_path):
+        os.remove(output_path)
+    os.makedirs(output_path)
+
+    square_textures = read_images_folder(images_dir)
+    if len(square_textures) == 0:
+        raise Exception("no images in dir")
+
+    image = General_SD.merge_image_to_squares(square_textures, resolution, row_sides, rol_sides, output_path)
+    return image[0]
 
 def apply_image_to_video(image,video,fps,per_side,output_resolution,batch_size):
     return General_SD.process_video_single(video_path=video,fps=fps,per_side=per_side,batch_size=batch_size,fillindenoise=0,edgedenoise=0,_smol_resolution=output_resolution,square_texture=image)
@@ -177,6 +188,12 @@ def post_process_ebsynth(input_folder,video,fps,per_side,output_resolution,batch
                                     max_frames=max_frames, output_folder=os.path.dirname(folder_video),
                                     border=border_frames)
 
+def split_square_images_to_singles(keys_rel_dir, square_text_dir, row_sides, rol_sides, _smol_resolution,
+                                   output_folder):
+    square_textures = read_images_folder(square_text_dir)
+    ebsynth.split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_resolution,output_folder, square_textures)
+    return
+
 def recombine_ebsynth(input_folder,fps,border_frames,batch):
     if os.path.exists(os.path.join(input_folder, "keys")):
         return ebsynth.crossfade_folder_of_folders(input_folder,fps=fps,return_generated_video_path=True)
@@ -196,7 +213,7 @@ def recombine_ebsynth(input_folder,fps,border_frames,batch):
             new_video =  ebsynth.crossfade_folder_of_folders(folder_loc,fps=fps)
             #print(f"generated new video at location {new_video}")
             generated_videos.append(new_video)
-        
+
         overlap_data_path = os.path.join(input_folder,"transition_data.txt")
         with open(overlap_data_path, "r") as f:
             merge = str(f.readline().strip())
@@ -222,7 +239,7 @@ def natural_keys(text):
 def read_images_folder(folder_path):
     images = []
     filenames = os.listdir(folder_path)
-    
+
     # Sort filenames based on the order of the numbers in their names
     filenames.sort(key=natural_keys)
 
@@ -231,7 +248,7 @@ def read_images_folder(folder_path):
         if (filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg')) and (not re.search(r'-\d', filename)):
             if filename.startswith('input'):
                 # Open image using Pillow library
-            
+
                 img = Image.open(os.path.join(folder_path, filename))
                 # Convert image to NumPy array and append to images list
                 images.append(np.array(img))
@@ -257,7 +274,7 @@ def numpy_array_to_data_uri(img_array):
 
     # combine the base64-encoded string with the image format prefix
     data_uri = 'data:image/png;base64,' + base64_str
-    
+
     return data_uri
 
 def numpy_array_to_temp_url(img_array):
@@ -265,9 +282,9 @@ def numpy_array_to_temp_url(img_array):
     filename = 'generatedsquare.png'
     extension_path = os.path.abspath(__file__)
     extension_dir =  os.path.dirname(os.path.dirname(extension_path))
-    extension_folder = os.path.join(extension_dir,"squares")  
+    extension_folder = os.path.join(extension_dir,"squares")
     if not os.path.exists(extension_folder):
-        os.makedirs(extension_folder)  
+        os.makedirs(extension_folder)
     # create a path for the temporary file
     file_path = os.path.join(extension_folder, filename)
 
@@ -279,7 +296,7 @@ def numpy_array_to_temp_url(img_array):
 
     # create a URL for the temporary file
     #url = 'file://' + file_path
-    
+
     return file_path
 
 def display_interface(interface):
@@ -292,7 +309,7 @@ def get_most_recent_file(provided_directory):
 
     # Get all files in the provided directory
     files = glob.glob(os.path.join(provided_directory, '*'))
-    
+
     if not files:
         return None
 
@@ -302,7 +319,7 @@ def get_most_recent_file(provided_directory):
     return most_recent_file
 
 def update_image():
-    global diffuseimg 
+    global diffuseimg
     extension_path = os.path.abspath(__file__)
     # get the directory name of the extension
     extension_dir =  os.path.dirname(os.path.dirname(extension_path))
@@ -375,10 +392,10 @@ def create_video_Processing_Tab():
                                     resolution = gr.Number(value=1024,label="Height Resolution", precision=1, interactive=True)
                                 with gr.Row():
                                     batch_size = gr.Number(value=5, label="frames per keyframe", precision=1, interactive=True)
-                                    fps = gr.Number(value=30, precision=1, label="fps", interactive=True)    
+                                    fps = gr.Number(value=30, precision=1, label="fps", interactive=True)
                                     ebsynth_mode = gr.Checkbox(label="EBSynth Mode", value=False)
                                 with gr.Row():
-                                    savesettings = gr.Button("Save Settings") 
+                                    savesettings = gr.Button("Save Settings")
                                 with gr.Row():
                                     batch_folder = gr.Textbox(label="Target Folder",placeholder="This is ignored if neither batch run or ebsynth are checked")
 
@@ -399,16 +416,16 @@ def create_video_Processing_Tab():
             savesettings.click(
                 fn=save_settings,
                 inputs=[fps,sides,batch_size,video]
-            )   
+            )
             with gr.Tabs(elemn_id="TemporalKit_gallery_container"):
                 with gr.TabItem(elem_id="output_TemporalKit", label="Output"):
                     with gr.Row():
                         result_image = gr.outputs.Image(type='pil')
                     with gr.Row():
-                        runbutton = gr.Button("Run") 
+                        runbutton = gr.Button("Run")
                     with gr.Row():
                         send_to_buttons = parameters_copypaste.create_buttons(["img2img"])
-                                    
+
                 try:
                     parameters_copypaste.bind_buttons(send_to_buttons, result_image, [""])
                 except:
@@ -425,7 +442,7 @@ def show_textbox(option):
         return False
 
 def create_diffusing_tab ():
-    global diffuseimg 
+    global diffuseimg
     with gr.Column(visible=True, elem_id="Processid") as second_panel:
         dummy_component = gr.Label(visible=False)
         with gr.Row():
@@ -447,14 +464,14 @@ def create_diffusing_tab ():
                             with gr.Row():
                                 runButton = gr.Button("run", elem_id="run_button")
 
-                            
+
             with gr.Tabs(elem_id="mode_TemporalKit"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Output"):
                         with gr.Column():
                             #newbutton = gr.Button("update", elem_id="update_button")
                             outputfile = gr.Video()
-    
+
         read_last_image.click(
         fn=update_image,
         outputs=input_image
@@ -491,16 +508,16 @@ def create_batch_tab ():
                                 border_frames = gr.Number(label="border frames",value=1,precision=1)
                             with gr.Row():
                                 runButton = gr.Button("run", elem_id="run_button")
-                            
 
-                            
+
+
             with gr.Tabs(elem_id="mode_TemporalKit"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Output"):
                         with gr.Column():
                             #newbutton = gr.Button("update", elem_id="update_button")
                             outputfile = gr.Video()
-    
+
         read_last_settings.click(
         fn=update_settings_from_file,
         inputs=[input_folder],
@@ -556,24 +573,91 @@ def create_ebsynth_tab():
         inputs=[input_folder,fps,border_frames,batch_size],
         outputs=outputvideo
         )
+
+def explode_tab():
+    with gr.Column(visible=True, elem_id="batch_process") as second_panel:
+        with gr.Row():
+            with gr.Tabs(elem_id="mode_TemporalKit"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Generate"):
+                        with gr.Column():
+                            with gr.Row():
+                                input_folder = gr.Textbox(label="Input Folder",placeholder="你需要分割的目录")
+                            with gr.Row():
+                                output_folder = gr.Textbox(label="Output Folder", placeholder="输出目录，没有会自动创建，有会清空")
+                            with gr.Row():
+                                keys_rel_dir = gr.Textbox(label="Output Folder", placeholder="用于对标的文件夹，存储生成文件的对标文件，用于对标文件名称，没有就从0开始算")
+                            with gr.Row():
+                                row_sides = gr.Number(label="per side",value=2,precision=1)
+                                rol_sides = gr.Number(label="per side",value=2,precision=1)
+                                output_resolution = gr.Number(label="output resolution",value=1024,precision=1)
+                            with gr.Row():
+                                runButton = gr.Button("start combine", elem_id="run_button")
+            with gr.Tabs(elem_id="mode_TemporalKit"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Output"):
+                        with gr.Column():
+                            outputFirstImage = gr.File()
+
+        runButton.click(
+        fn=split_square_images_to_singles,
+        inputs=[keys_rel_dir, input_folder, row_sides, rol_sides, output_resolution, output_folder],
+        outputs=outputFirstImage
+        )
+
+def merge_tab():
+    with gr.Column(visible=True, elem_id="batch_process") as second_panel:
+        with gr.Row():
+            with gr.Tabs(elem_id="mode_TemporalKit"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Generate"):
+                        with gr.Column():
+                            with gr.Row():
+                                images_dir = gr.Textbox(label="Input Folder",placeholder="你需要合并的目录")
+                            with gr.Row():
+                                output_folder = gr.Textbox(label="Output Folder", placeholder="输出目录，没有会自动创建，有会清空")
+                            with gr.Row():
+                                row_sides = gr.Number(label="per side",value=2,precision=1)
+                                rol_sides = gr.Number(label="per side",value=2,precision=1)
+                                output_resolution = gr.Number(label="output resolution",value=1024,precision=1)
+                            with gr.Row():
+                                runButton = gr.Button("start combine", elem_id="run_button")
+            with gr.Tabs(elem_id="mode_TemporalKit"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Output"):
+                        with gr.Column():
+                            outputFirstImage = gr.File()
+
+        runButton.click(
+        fn=merge_image_to_square,
+        inputs=[images_dir, row_sides, rol_sides, output_resolution, output_folder],
+        outputs=outputFirstImage
+        )
+
 tabs_list = ["TemporalKit"]
 
 def on_ui_tabs():
-   
+
     with gr.Blocks(analytics_enabled=False) as temporalkit:
         with gr.Tabs(elem_id="TemporalKit-Tab") as tabs:
                 with gr.Tab(label="Pre-Processing"):
-                    with gr.Blocks(analytics_enabled=False):    
+                    with gr.Blocks(analytics_enabled=False):
                         create_video_Processing_Tab()
                 with gr.Tab(label="Temporal-Warp",elem_id="processbutton"):
-                    with gr.Blocks(analytics_enabled=False):          
+                    with gr.Blocks(analytics_enabled=False):
                         create_diffusing_tab()
                 with gr.Tab(label="Batch-Warp",elem_id="batch-button"):
-                    with gr.Blocks(analytics_enabled=False):          
+                    with gr.Blocks(analytics_enabled=False):
                         create_batch_tab()
                 with gr.Tab(label="Ebsynth-Process",elem_id="Ebsynth-Process"):
-                    with gr.Blocks(analytics_enabled=False):          
+                    with gr.Blocks(analytics_enabled=False):
                         create_ebsynth_tab()
+                with gr.Tab(label="Ebsynth-Explode-Helper",elem_id="Ebsynth-Explode-Helper"):
+                    with gr.Blocks(analytics_enabled=False):
+                        explode_tab()
+                with gr.Tab(label="Ebsynth-Merge-Helper",elem_id="Ebsynth-Merge-Helper"):
+                    with gr.Blocks(analytics_enabled=False):
+                        merge_tab()
         return (temporalkit, "Temporal-Kit", "TemporalKit"),
 
 
@@ -594,10 +678,10 @@ def generate(
     batch_in_dir,
     sampler
     ):
-        
+
     model = shared.sd_model
     model.eval().to(shared.device)
-    
+
     animated_gifs = []
 
 

@@ -30,6 +30,10 @@ check_edges = False
 
 def split_into_batches(frames, batch_size, max_batches):
     groups = [frames[i:i+batch_size] for i in range(0, len(frames), batch_size)][:max_batches]
+    # 0 - 5
+    # 5 - 10
+    # 10 - 15
+    # 15 - 20
 
     # Add any remaining images to the last group
     if len(frames) > max_batches * batch_size:
@@ -68,6 +72,40 @@ def create_square_texture(frames, max_size, side_length=3):
 
     return fixed_texture
 
+def create_square_texture_2(frames, resolution, row_sides, rol_sides):
+
+    original_height, original_width = frames[0].shape[:2]
+    # Calculate the average aspect ratio of the input frames
+
+    frames_per_col = row_sides  # 每列多少行
+    frames_per_row = rol_sides  # 每行多少列
+    big_frame_height = int(original_height / frames_per_col)
+    big_frame_width = int(original_width / frames_per_row)
+
+    texture_aspect_ratio = float(big_frame_width) / float(big_frame_height)
+    _smol_frame_height = resolution
+    _smol_frame_width = int(_smol_frame_height * texture_aspect_ratio)
+
+    actual_texture_width, actual_texture_height = utilityb.resize_to_nearest_multiple_2(_smol_frame_width, _smol_frame_height, row_sides, rol_sides)
+
+    frame_width = int (actual_texture_width / frames_per_row)
+    frame_height = int(actual_texture_height / frames_per_col)
+    print (f"generating square of width {actual_texture_width} and height {actual_texture_height}")
+
+    texture = np.zeros((actual_texture_height, actual_texture_width, 3), dtype=np.uint8)
+
+    fixed_texture = texture
+
+    for i, frame in enumerate(frames):
+        if frame is not None and not frame.size == 0:
+            resized_frame = cv2.resize(frame, (frame_width, frame_height), interpolation=cv2.INTER_AREA)
+            row, col = i // frames_per_col, i % frames_per_row
+            texture[row * frame_height:(row + 1) * frame_height, col * frame_width:(col + 1) * frame_width] = resized_frame
+            #truth be told i am not entirely sure why this is needed
+            fixed_texture = cv2.resize(texture, (actual_texture_width, actual_texture_height), interpolation=cv2.INTER_AREA)
+
+    return fixed_texture
+
 def split_frames_into_big_batches(frames, batch_size, border,ebsynth,returnframe_locations=False):
     """
     Splits an array of numpy frames into batches of a given size, adding a certain number of border
@@ -77,18 +115,18 @@ def split_frames_into_big_batches(frames, batch_size, border,ebsynth,returnframe
     frames (numpy.ndarray): The input frames to be split.
     batch_size (int): The number of frames per batch.
     border (int): The number of border frames from the next batch to add to each batch.
-
+    batch_size = 20 border = 0
     Returns:
     List[numpy.ndarray]: A list of batches, each containing `batch_size` + `border` frames (except for the last batch).
     """
-    num_frames = len(frames)
-    num_batches = int(np.ceil(num_frames / batch_size))
+    num_frames = len(frames) # 423
+    num_batches = int(np.ceil(num_frames / batch_size)) # 21
     print(f"frames num = {len(frames)} while num batches = {num_batches}")
     batches = []
 
     frame_locations = []
     for i in range(num_batches):
-        start_idx = i * batch_size
+        start_idx = i * batch_size # 0-20
         end_idx = start_idx + batch_size
         if ebsynth == False:
             # Add border frames if not the last batch and if available
@@ -139,6 +177,43 @@ def split_square_texture(texture, num_frames,max_frames, _smol_resolution,ebsynt
         if not frame.size == 0:
             resized_frame = cv2.resize(frame, (_smol_frame_resized_width, _smol_frame_resized_height), interpolation=cv2.INTER_AREA)
             frames.append(resized_frame)
+        else:
+            print("frame size 0")
+            frames.append(np.zeros((_smol_frame_resized_width, _smol_frame_resized_height, 3), dtype=np.uint8))
+
+    return frames
+
+def split_square_texture_2(texture, row_sides, rol_sides, _smol_resolution):
+    # num_frames = 4  max_frames = 4
+    texture_height, texture_width = texture.shape[:2]
+    texture_aspect_ratio = float(texture_width) / float(texture_height)
+
+    frames_per_col = row_sides  # 每列多少行
+    frames_per_row = rol_sides  # 每行多少列
+    frame_height = int(texture_height / frames_per_col)
+    frame_width = int(texture_width / frames_per_row)
+    frames_per_image = row_sides * rol_sides
+
+    # 这两个是最后生成的图片的大小
+    _smol_frame_height = _smol_resolution
+    _smol_frame_width = int(_smol_frame_height * texture_aspect_ratio)
+    _smol_frame_resized_width, _smol_frame_resized_height = _smol_frame_width, _smol_frame_height
+    frames = []
+
+    for i in range(frames_per_image):
+        row, col = i // frames_per_col, i % frames_per_row
+        frame = texture[row * frame_height:(row + 1) * frame_height, col * frame_width:(col + 1) * frame_width]
+        # [0:1，0：1]
+        # [0:1, 1: 2]
+        # [1:2, 0:1]
+        # [1:2, 1: 2]
+
+        if not frame.size == 0:
+            resized_frame = cv2.resize(frame, (_smol_frame_resized_width, _smol_frame_resized_height),
+                                       interpolation=cv2.INTER_AREA)
+            frame_to_save = cv2.resize(resized_frame, (_smol_frame_width, _smol_frame_height),
+                                       interpolation=cv2.INTER_LINEAR)
+            frames.append(frame_to_save)
         else:
             print("frame size 0")
             frames.append(np.zeros((_smol_frame_resized_width, _smol_frame_resized_height, 3), dtype=np.uint8))
@@ -255,6 +330,21 @@ def generate_squares_to_folder (video_path, fps, batch_size,resolution,size_size
     return square_textures
 
 
+def merge_image_to_squares(images, resolution, row_sides, rol_sides, output_folder):
+
+    texture_height, texture_width = images[0].shape[:2]
+    frames_per_image = row_sides * rol_sides
+
+    bigbatches =[images[i:i+frames_per_image] for i in range(0, len(images))][:len(images) / frames_per_image]
+    # 最后几个组成一个新的batch
+    bigbatches[-1] += images[-(len(images) % frames_per_image):]
+    square_textures = []
+    for keyframes in bigbatches:
+        square_texture = create_square_texture_2(keyframes, resolution, row_sides, rol_sides)
+        save_square_texture(square_texture, output_folder)
+        square_textures.append(square_texture)
+
+    return square_textures
 
 def merge_image_batches(image_batches, border):
     merged_batches = []
