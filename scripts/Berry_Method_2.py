@@ -94,7 +94,6 @@ def create_square_texture_2(frames, resolution, row_sides, rol_sides):
 
     texture = np.zeros((actual_texture_height, actual_texture_width, 3), dtype=np.uint8)
 
-    print([actual_texture_height, actual_texture_width])
     fixed_texture = texture
 
     for i, frame in enumerate(frames):
@@ -103,9 +102,6 @@ def create_square_texture_2(frames, resolution, row_sides, rol_sides):
             row, col = i // frames_per_col, i % frames_per_row
             # print([resized_frame.shape[0], resized_frame.shape[1]])
             # print([texture.shape[0], texture.shape[1]])
-            print([(row ,(row + 1)), (col,(col + 1) )])
-            print([(row * frame_height,(row + 1) * frame_height) , (col * frame_width,(col + 1) * frame_width)])
-
             texture[row * frame_height:(row + 1) * frame_height, col * frame_width:(col + 1) * frame_width] = resized_frame
             #truth be told i am not entirely sure why this is needed
             fixed_texture = cv2.resize(texture, (actual_texture_width, actual_texture_height), interpolation=cv2.INTER_AREA)
@@ -353,7 +349,7 @@ def merge_image_to_squares(images, resolution, row_sides, rol_sides, output_fold
         index += 1
         square_textures.append(square_texture)
 
-    return os.path.join(output_folder, str(index) + ".png")
+    return os.path.join(output_folder, str(index -1) + ".png")
 
 def merge_image_batches(image_batches, border):
     merged_batches = []
