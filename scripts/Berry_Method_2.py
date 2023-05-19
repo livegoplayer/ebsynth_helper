@@ -94,6 +94,7 @@ def create_square_texture_2(frames, resolution, row_sides, rol_sides):
 
     texture = np.zeros((actual_texture_height, actual_texture_width, 3), dtype=np.uint8)
 
+    print([actual_texture_height, actual_texture_width])
     fixed_texture = texture
 
     for i, frame in enumerate(frames):
@@ -343,6 +344,7 @@ def merge_image_to_squares(images, resolution, row_sides, rol_sides, output_fold
     for keyframes in bigbatches:
         square_texture = create_square_texture_2(keyframes, resolution, row_sides, rol_sides)
         save_square_texture(square_texture, os.path.join(output_folder, str(index) + ".png"))
+        index += 1
         square_textures.append(square_texture)
 
     return square_textures
