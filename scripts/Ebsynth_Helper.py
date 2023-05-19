@@ -121,8 +121,9 @@ def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_res
         print("key_rel 目录为空，自动编号")
     file_list = sorted(f)
 
+    import shutil
     if os.path.exists(output_folder):
-        os.removedirs(output_folder)
+        shutil.rmtree(output_folder, ignore_errors=True)
     os.makedirs(output_folder)
 
     last_index = 0

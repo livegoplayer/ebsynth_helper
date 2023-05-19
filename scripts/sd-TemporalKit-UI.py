@@ -128,7 +128,7 @@ def upload_file(files):
 
 def merge_image_to_square(images_dir, row_sides, rol_sides, resolution, output_path):
     if os.path.exists(output_path):
-        os.removedirs(output_path)
+        shutil.rmtree(output_path, ignore_errors=True)
     os.makedirs(output_path)
 
     square_textures = read_images_folder(images_dir)
