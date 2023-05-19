@@ -41,8 +41,9 @@ import scripts.Berry_Method as General_SD
 import glob
 import base64
 import io
+import scripts.Ebsynth_Helper as ebsynth
 import scripts.berry_utility as sd_utility
-from scripts import Ebsynth_Processing
+
 
 diffuseimg = None
 SamplerData = namedtuple('SamplerData', ['name', 'constructor', 'aliases', 'options'])
@@ -152,15 +153,15 @@ def merge_image_to_square(images_dir, row_sides, rol_sides, resolution, output_p
 #     print(len(images))
 #     split_mode = os.path.join(input_folder, "keys")
 #     if os.path.exists(split_mode):
-#         return Ebsynth_Processing.sort_into_folders(video_path=video,fps=fps,per_side=per_side,batch_size=batch_size,_smol_resolution=output_resolution,square_textures=images,max_frames=max_frames,output_folder=input_folder,border=border_frames)
+#         return ebsynth.sort_into_folders(video_path=video,fps=fps,per_side=per_side,batch_size=batch_size,_smol_resolution=output_resolution,square_textures=images,max_frames=max_frames,output_folder=input_folder,border=border_frames)
 #     else:
 #         img_folder = os.path.join(input_folder, "output")
 #         # define a regular expression pattern to match directory names with one or more digits
 #         pattern = r'^\d+$'
-# 
+#
 #         # get a list of all directories in the specified path
 #         all_dirs = os.listdir(input_folder)
-# 
+#
 #         # use a list comprehension to filter the directories based on the pattern
 #         numeric_dirs = sorted([d for d in all_dirs if re.match(pattern, d)], key=lambda x: int(x))
 #         max_frames = max_frames + border_frames
@@ -181,20 +182,20 @@ def merge_image_to_square(images_dir, row_sides, rol_sides, resolution, output_p
 #                 # Convert image to NumPy array and append to images list
 #                 print(f"saving {os.path.join(input_images_folder, img_name)}")
 #                 square_textures.append(np.array(img))
-# 
-#             Ebsynth_Processing.sort_into_folders(video_path=folder_video, fps=fps, per_side=per_side, batch_size=batch_size,
+#
+#             ebsynth.sort_into_folders(video_path=folder_video, fps=fps, per_side=per_side, batch_size=batch_size,
 #                                     _smol_resolution=output_resolution, square_textures=square_textures,
 #                                     max_frames=max_frames, output_folder=os.path.dirname(folder_video),
 #                                     border=border_frames)
 
 def split_square_images_to_singles(keys_rel_dir, square_text_dir, row_sides, rol_sides, _smol_resolution, output_folder):
     square_textures = read_images_folder(square_text_dir)
-    Ebsynth_Processing.split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_resolution,output_folder, square_textures)
+    ebsynth.split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_resolution,output_folder, square_textures)
     return
 
 # def recombine_ebsynth(input_folder,fps,border_frames,batch):
 #     if os.path.exists(os.path.join(input_folder, "keys")):
-#         return Ebsynth_Processing.crossfade_folder_of_folders(input_folder,fps=fps,return_generated_video_path=True)
+#         return ebsynth.crossfade_folder_of_folders(input_folder,fps=fps,return_generated_video_path=True)
 #     else:
 #         generated_videos = []
 #         pattern = r'^\d+$'
@@ -208,7 +209,7 @@ def split_square_images_to_singles(keys_rel_dir, square_text_dir, row_sides, rol
 #         for d in numeric_dirs:
 #             folder_loc = os.path.join(input_folder,d)
 #             # loop through each image file in the image folder
-#             new_video =  Ebsynth_Processing.crossfade_folder_of_folders(folder_loc,fps=fps)
+#             new_video =  ebsynth.crossfade_folder_of_folders(folder_loc,fps=fps)
 #             #print(f"generated new video at location {new_video}")
 #             generated_videos.append(new_video)
 #
