@@ -102,6 +102,8 @@ def sort_into_folders(video_path, fps, per_side, batch_size, _smol_resolution,sq
 # rol_sides 多少列
 
 def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_resolution, output_folder, square_textures):
+    print(len(square_textures))
+    print(len(square_textures[0].shape))
     texture_height, texture_width = square_textures[0].shape[:2]
 
     from os import walk
