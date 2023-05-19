@@ -353,7 +353,7 @@ def merge_image_to_squares(images, resolution, row_sides, rol_sides, output_fold
         index += 1
         square_textures.append(square_texture)
 
-    return square_textures
+    return os.path.join(output_folder, str(index) + ".png")
 
 def merge_image_batches(image_batches, border):
     merged_batches = []

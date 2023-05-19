@@ -136,7 +136,7 @@ def merge_image_to_square(images_dir, row_sides, rol_sides, resolution, output_p
         raise Exception("no images in dir")
 
     image = General_SD.merge_image_to_squares(square_textures, resolution, row_sides, rol_sides, output_path)
-    return image[0]
+    return image
 
 # def apply_image_to_video(image,video,fps,per_side,output_resolution,batch_size):
 #     return General_SD.process_video_single(video_path=video,fps=fps,per_side=per_side,batch_size=batch_size,fillindenoise=0,edgedenoise=0,_smol_resolution=output_resolution,square_texture=image)
