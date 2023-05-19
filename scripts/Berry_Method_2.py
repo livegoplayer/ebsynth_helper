@@ -101,7 +101,8 @@ def create_square_texture_2(frames, resolution, row_sides, rol_sides):
         if frame is not None and not frame.size == 0:
             resized_frame = cv2.resize(frame, (frame_width, frame_height), interpolation=cv2.INTER_AREA)
             row, col = i // frames_per_col, i % frames_per_row
-            print([resized_frame.sharp[0], resized_frame.sharp[1]])
+            print([resized_frame.shape[0], resized_frame.shape[1]])
+            print([texture.shape[0], texture.shape[1]])
             texture[row * frame_height:(row + 1) * frame_height, col * frame_width:(col + 1) * frame_width] = resized_frame
             #truth be told i am not entirely sure why this is needed
             fixed_texture = cv2.resize(texture, (actual_texture_width, actual_texture_height), interpolation=cv2.INTER_AREA)
