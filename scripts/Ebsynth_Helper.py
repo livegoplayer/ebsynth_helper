@@ -102,8 +102,7 @@ def sort_into_folders(video_path, fps, per_side, batch_size, _smol_resolution,sq
 # rol_sides 多少列
 
 def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_resolution, output_folder, square_textures):
-    print(len(square_textures))
-    print(len(square_textures[0].shape))
+    print(str(len(square_textures)) + "images to merge")
     texture_height, texture_width = square_textures[0].shape[:2]
 
     from os import walk
@@ -124,7 +123,7 @@ def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_res
     file_list = sorted(f)
 
     last_index = 0
-    for i, square_texture in square_textures:
+    for square_texture in square_textures:
         resized_square_texture = cv2.resize(square_texture, (texture_width, texture_height),
                                             interpolation=cv2.INTER_LINEAR)
         new_frames = bmethod.split_square_texture_2(resized_square_texture, row_sides, rol_sides,
@@ -134,7 +133,7 @@ def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_res
         if os.path.exists(output_folder):
             os.remove(output_folder)
         os.makedirs(output_folder)
-        for i, frame_to_save in new_frames:
+        for frame_to_save in new_frames:
             if last_index < len(file_list):
                 frame_name = file_list[last_index]
             else:
