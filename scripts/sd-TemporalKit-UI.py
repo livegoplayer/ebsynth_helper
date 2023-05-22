@@ -780,7 +780,7 @@ def on_ui_tabs():
                 with gr.Tab(label="Ebsynth-Mask-Helper",elem_id="Ebsynth-Mask-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         mask_tab()
-                with gr.Tab(label="Ebsynth-Mask-Helper", elem_id="Ebsynth-Mask-Helper"):
+                with gr.Tab(label="Ebsynth-Pick-Up-Helper", elem_id="Ebsynth-pick-up-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         pick_up_tab()
         return (EbsynthHelper, "Ebsynth-Helper", "EbsynthHelper"),
