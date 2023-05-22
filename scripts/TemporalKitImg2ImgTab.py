@@ -26,9 +26,10 @@ def on_button_click():
     extension_path = os.path.abspath(__file__)
     extension_dir =  os.path.dirname(os.path.dirname(extension_path))
     extension_folder = os.path.join(extension_dir,"squares")
-    
+    if lastimage is not None:
+        save_image(lastimage, 'last.png', extension_folder)
+
     # save the image to the parent directory with a new filename
-    save_image(lastimage, 'last.png', extension_folder)
 
         
 class Script(scripts.Script):
