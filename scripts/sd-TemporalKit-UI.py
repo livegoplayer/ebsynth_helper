@@ -162,11 +162,35 @@ def create_img_mask(images_dir, output_path, model_type):
                 img_x = image_now.shape[1]
                 d_m = sdmg.calculate_depth_maps(img, img_x, img_y, model_type, False)
                 mask_img = General_SD.create_depth_mask_from_depth_map(d_m)
-                print("save mask to " + filename)
+                print("save mask to " + os.path.join(output_path, filename))
                 mask_img.save(os.path.join(output_path, filename))
                 img.close()
 
     return images
+
+def pick_up_image(images_dir, output_path, rel_dir):
+    if os.path.exists(output_path):
+        shutil.rmtree(output_path, ignore_errors=True)
+    os.makedirs(output_path)
+
+    if len(images_dir) == 0:
+        raise Exception("no images in dir")
+
+    if not os.path.exists(rel_dir):
+        raise Exception("rel_dir is invalid")
+
+    filenames = os.listdir(rel_dir)
+    filenames.sort(key=natural_keys)
+    img = ''
+    for filename in filenames:
+        if not os.path.exists(os.path.join(images_dir, filename)):
+            raise Exception(os.path.join(images_dir, filename) + "is not exits, failed to pick up")
+
+        print("from " + os.path.join(images_dir, filename) + " to " + os.path.join(output_path, filename))
+        img = Image.open(os.path.join(images_dir, filename))
+        img.save(os.path.join(output_path, filename))
+
+    return img
 
 # def apply_image_to_video(image,video,fps,per_side,output_resolution,batch_size):
 #     return General_SD.process_video_single(video_path=video,fps=fps,per_side=per_side,batch_size=batch_size,fillindenoise=0,edgedenoise=0,_smol_resolution=output_resolution,square_texture=image)
@@ -702,6 +726,33 @@ def mask_tab():
         outputs=outputFirstImage
         )
 
+def pick_up_tab():
+    with gr.Column(visible=True, elem_id="batch_process") as second_panel:
+        with gr.Row():
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Generate"):
+                        with gr.Column():
+                            with gr.Row():
+                                images_dir = gr.Textbox(label="Input Folder",placeholder="源图目录")
+                            with gr.Row():
+                                output_folder = gr.Textbox(label="Output Folder", placeholder="输出目录，没有会自动创建，有会清空")
+                            with gr.Row():
+                                rel_folder = gr.Textbox(label="rel_folder", placeholder="对照pick up 的目录，必填")
+                            with gr.Row():
+                                runButton = gr.Button("start pick up", elem_id="run_button")
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Output"):
+                        with gr.Column():
+                            outputFirstImage = gr.File()
+
+        runButton.click(
+        fn=pick_up_image,
+        inputs=[images_dir, output_folder, rel_folder],
+        outputs=outputFirstImage
+        )
+
 tabs_list = ["EbsynthHelper"]
 
 def on_ui_tabs():
@@ -731,7 +782,7 @@ def on_ui_tabs():
                         mask_tab()
                 with gr.Tab(label="Ebsynth-Mask-Helper", elem_id="Ebsynth-Mask-Helper"):
                     with gr.Blocks(analytics_enabled=False):
-                        mask_tab()
+                        pick_up_tab()
         return (EbsynthHelper, "Ebsynth-Helper", "EbsynthHelper"),
 
 
