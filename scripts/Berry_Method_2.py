@@ -233,8 +233,8 @@ def save_square_texture(texture, file_path):
         texture = (texture * 255).astype(np.uint8)
     
     # Check if the input has the intended shape (3 channels for an RGB image)
-    if texture.ndim != 3 or texture.shape[2] != 3:
-        raise ValueError("Invalid texture shape. Expected a 3-channel RGB image.")
+    # if texture.ndim != 3 or texture.shape[2] != 3:
+    #     raise ValueError("Invalid texture shape. Expected a 3-channel RGB image.")
     
     # Convert the NumPy array to a PIL Image
     image = Image.fromarray(texture)
@@ -349,6 +349,7 @@ def merge_image_to_squares(images, resolution, row_sides, rol_sides, output_fold
     for keyframes in bigbatches:
         square_texture = create_square_texture_2(keyframes, resolution, row_sides, rol_sides)
         save_square_texture(square_texture, os.path.join(output_folder, str(index) + ".png"))
+
         index += 1
         square_textures.append(square_texture)
 
