@@ -1,3 +1,5 @@
+import importlib.util
+
 import cv2
 import base64
 from PIL import Image
@@ -16,6 +18,7 @@ import re
 import gradio as gr
 from io import BytesIO
 import shutil
+import copy
 
 resolution = 1400
 smol_resolution = 512
@@ -348,6 +351,36 @@ def merge_image_to_squares(images, resolution, row_sides, rol_sides, output_fold
         square_textures.append(square_texture)
 
     return os.path.join(output_folder, str(index -1) + ".png")
+
+
+# copy from https://github.com/Extraltodeus/depthmap2mask
+def create_depth_mask_from_depth_map(img):
+    treshold = 0
+    clean_cut = True
+    img = copy.deepcopy(img.convert("RGBA"))
+    mask_img = copy.deepcopy(img.convert("L"))
+    mask_datas = mask_img.getdata()
+    datas = img.getdata()
+    newData = []
+    maxD = max(mask_datas)
+    if clean_cut and treshold == 0:
+        treshold = 128
+    for i in range(len(mask_datas)):
+        if clean_cut and mask_datas[i] > treshold:
+            newrgb = 255
+        elif mask_datas[i] > treshold and not clean_cut:
+            newrgb = int(remap_range(mask_datas[i], treshold, 255, 0, 255))
+        else:
+            newrgb = 0
+        newData.append((newrgb, newrgb, newrgb, 255))
+    img.putdata(newData)
+    return img
+
+def remap_range(value, minIn, MaxIn, minOut, maxOut):
+    if value > MaxIn: value = MaxIn;
+    if value < minIn: value = minIn;
+    finalValue = ((value - minIn) / (MaxIn - minIn)) * (maxOut - minOut) + minOut;
+    return finalValue;
 
 def merge_image_batches(image_batches, border):
     merged_batches = []
@@ -749,3 +782,9 @@ def trim_images(images_list_of_lists, max_images, border_indices):
                 border_indices.pop()
 
     return images_list_of_lists, border_indices
+
+def module_from_file(module_name, file_path):
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module

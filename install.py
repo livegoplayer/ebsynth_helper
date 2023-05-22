@@ -12,3 +12,4 @@ if not launch.is_installed("imageio_ffmpeg"):
 
 if not launch.is_installed("scenedetect"):
     launch.run_pip("install scenedetect", "requirements for EbsyntHelper extension")
+launch.git_clone("https://github.com/isl-org/MiDaS.git", "repositories/midas", "midas", "1645b7e")

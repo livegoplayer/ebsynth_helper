@@ -5,8 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a96905a3-2c95-4644-b2a0-9a50edd44fbe" name="Changes" comment="1">
+      <change afterPath="$PROJECT_DIR$/scripts/depthmap_for_depth2img.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/TemporalKitImg2ImgTab.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/TemporalKitImg2ImgTab.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/install.py" beforeDir="false" afterPath="$PROJECT_DIR$/install.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/Berry_Method_2.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/Berry_Method_2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/sd-TemporalKit-UI.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/sd-TemporalKit-UI.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,8 +48,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1684483070630</updated>
-      <workItem from="1684483071713" duration="13008000" />
-      <workItem from="1684732640518" duration="325000" />
+      <workItem from="1684483071713" duration="12851000" />
+      <workItem from="1684737711243" duration="3928000" />
     </task>
     <task id="LOCAL-00001" summary="1">
       <created>1684483111224</created>
@@ -272,14 +275,7 @@
       <option name="project" value="LOCAL" />
       <updated>1684495725552</updated>
     </task>
-    <task id="LOCAL-00033" summary="1">
-      <created>1684496259593</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1684496259593</updated>
-    </task>
-    <option name="localTasksCounter" value="34" />
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

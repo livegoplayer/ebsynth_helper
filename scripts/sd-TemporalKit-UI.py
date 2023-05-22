@@ -137,6 +137,36 @@ def merge_image_to_square(images_dir, row_sides, rol_sides, resolution, output_p
 
     image = General_SD.merge_image_to_squares(square_textures, resolution, row_sides, rol_sides, output_path)
     return image
+def create_img_mask(images_dir, output_path, model_type):
+    if os.path.exists(output_path):
+        shutil.rmtree(output_path, ignore_errors=True)
+    os.makedirs(output_path)
+
+    if len(images_dir) == 0:
+        raise Exception("no images in dir")
+
+    filenames = os.listdir(images_dir)
+
+    # Sort filenames based on the order of the numbers in their names
+    filenames.sort(key=natural_keys)
+    sdmg = General_SD.module_from_file("depthmap_for_depth2img", 'extensions/ebsynth_helper/scripts/depthmap_for_depth2img.py')
+    sdmg = sdmg.SimpleDepthMapGenerator()
+
+    for filename in filenames:
+        # Check if file is an image (assumes only image files are in the folder)
+        if (filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg')) and (not re.search(r'-\d', filename)):
+                img = Image.open(os.path.join(images_dir, filename))
+                # Convert image to NumPy array and append to images list
+                image_now = np.array(img)
+                img_y = image_now.shape[0]
+                img_x = image_now.shape[1]
+                d_m = sdmg.calculate_depth_maps(img, img_x, img_y, model_type, False)
+                mask_img = General_SD.create_depth_mask_from_depth_map(d_m)
+                print("save mask to " + filename)
+                mask_img.save(os.path.join(output_path, filename))
+                img.close()
+
+    return images
 
 # def apply_image_to_video(image,video,fps,per_side,output_resolution,batch_size):
 #     return General_SD.process_video_single(video_path=video,fps=fps,per_side=per_side,batch_size=batch_size,fillindenoise=0,edgedenoise=0,_smol_resolution=output_resolution,square_texture=image)
@@ -629,6 +659,48 @@ def merge_tab():
         inputs=[images_dir, row_sides, rol_sides, output_resolution, output_folder],
         outputs=outputFirstImage
         )
+def mask_tab():
+    with gr.Column(visible=True, elem_id="batch_process") as second_panel:
+        with gr.Row():
+            models = ["dpt_beit_large_512",
+                      "dpt_beit_large_384",
+                      "dpt_beit_base_384",
+                      "dpt_swin2_large_384",
+                      "dpt_swin2_base_384",
+                      "dpt_swin2_tiny_256",
+                      "dpt_swin_large_384",
+                      "dpt_next_vit_large_384",
+                      "dpt_levit_224",
+                      "dpt_large_384",
+                      "dpt_hybrid_384",
+                      "midas_v21_384",
+                      "midas_v21_small_256",
+                      # "openvino_midas_v21_small_256"
+                      ]
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Generate"):
+                        with gr.Column():
+                            with gr.Row():
+                                images_dir = gr.Textbox(label="Input Folder",placeholder="原图目录")
+                            with gr.Row():
+                                model_type = gr.Dropdown(label="Model", choices=models, value="dpt_swin2_base_384",
+                                                         type="index", elem_id="model_type")
+                            with gr.Row():
+                                output_folder = gr.Textbox(label="Output Folder", placeholder="输出目录，没有会自动创建，有会清空")
+                            with gr.Row():
+                                runButton = gr.Button("start crate mask", elem_id="run_button")
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Output"):
+                        with gr.Column():
+                            outputFirstImage = gr.File()
+
+        runButton.click(
+        fn=create_img_mask,
+        inputs=[images_dir, output_folder, model_type],
+        outputs=outputFirstImage
+        )
 
 tabs_list = ["EbsynthHelper"]
 
@@ -654,6 +726,12 @@ def on_ui_tabs():
                 with gr.Tab(label="Ebsynth-Merge-Helper",elem_id="Ebsynth-Merge-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         merge_tab()
+                with gr.Tab(label="Ebsynth-Mask-Helper",elem_id="Ebsynth-Mask-Helper"):
+                    with gr.Blocks(analytics_enabled=False):
+                        mask_tab()
+                with gr.Tab(label="Ebsynth-Mask-Helper", elem_id="Ebsynth-Mask-Helper"):
+                    with gr.Blocks(analytics_enabled=False):
+                        mask_tab()
         return (EbsynthHelper, "Ebsynth-Helper", "EbsynthHelper"),
 
 
