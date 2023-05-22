@@ -47,6 +47,7 @@ def split_into_batches(frames, batch_size, max_batches):
 def create_square_texture(frames, max_size, side_length=3):
 
     original_height, original_width = frames[0].shape[:2]
+    tunnel = frames[0].shape[2]
     # Calculate the average aspect ratio of the input frames
     big_frame_width = original_width * side_length
     big_frame_height = original_height * side_length
@@ -63,7 +64,7 @@ def create_square_texture(frames, max_size, side_length=3):
     frame_height = int(actual_texture_height / side_length)
     print (f"generating square of width {actual_texture_width} and height {actual_texture_height}")
 
-    texture = np.zeros((actual_texture_height, actual_texture_width, 3), dtype=np.uint8)
+    texture = np.zeros((actual_texture_height, actual_texture_width, tunnel), dtype=np.uint8)
 
     for i, frame in enumerate(frames):
         if frame is not None and not frame.size == 0:
