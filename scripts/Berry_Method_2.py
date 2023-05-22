@@ -78,6 +78,7 @@ def create_square_texture(frames, max_size, side_length=3):
 def create_square_texture_2(frames, resolution, row_sides, rol_sides):
 
     original_height, original_width = frames[0].shape[:2]
+    tunnel = frames[0].shape[2]
     # Calculate the average aspect ratio of the input frames
 
     frames_per_col = row_sides  # 每列多少行
@@ -95,7 +96,7 @@ def create_square_texture_2(frames, resolution, row_sides, rol_sides):
     frame_height = int(actual_texture_height / frames_per_col)
     print (f"generating square of width {actual_texture_width} and height {actual_texture_height}")
 
-    texture = np.zeros((actual_texture_height, actual_texture_width, 3), dtype=np.uint8)
+    texture = np.zeros((actual_texture_height, actual_texture_width, tunnel), dtype=np.uint8)
 
     fixed_texture = texture
 
