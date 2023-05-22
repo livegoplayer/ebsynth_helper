@@ -47,7 +47,8 @@
       <updated>1684483070630</updated>
       <workItem from="1684483071713" duration="12851000" />
       <workItem from="1684737711243" duration="5466000" />
-      <workItem from="1684744006375" duration="76000" />
+      <workItem from="1684744006375" duration="113000" />
+      <workItem from="1684745559685" duration="188000" />
     </task>
     <task id="LOCAL-00001" summary="1">
       <created>1684483111224</created>
@@ -287,7 +288,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684743334926</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="加了mask">
+      <created>1684744092950</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1684744092950</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

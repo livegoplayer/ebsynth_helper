@@ -181,7 +181,7 @@ def pick_up_image(images_dir, output_path, rel_dir):
 
     filenames = os.listdir(rel_dir)
     filenames.sort(key=natural_keys)
-    img = ''
+    filename = ''
     for filename in filenames:
         if not os.path.exists(os.path.join(images_dir, filename)):
             raise Exception(os.path.join(images_dir, filename) + "is not exits, failed to pick up")
@@ -190,7 +190,7 @@ def pick_up_image(images_dir, output_path, rel_dir):
         img = Image.open(os.path.join(images_dir, filename))
         img.save(os.path.join(output_path, filename))
 
-    return img
+    return os.path.join(output_path, filename)
 
 # def apply_image_to_video(image,video,fps,per_side,output_resolution,batch_size):
 #     return General_SD.process_video_single(video_path=video,fps=fps,per_side=per_side,batch_size=batch_size,fillindenoise=0,edgedenoise=0,_smol_resolution=output_resolution,square_texture=image)
