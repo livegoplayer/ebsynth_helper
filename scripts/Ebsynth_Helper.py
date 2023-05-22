@@ -115,7 +115,7 @@ def split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_res
             if layer == 2:
                 break
             for name in filenames:
-                f.append(os.path.join(keys_rel_dir, name))
+                f.append(name)
             layer += 1
     else:
         print("key_rel 目录为空，自动编号")
