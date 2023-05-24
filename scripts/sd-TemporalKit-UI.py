@@ -152,6 +152,7 @@ def create_img_mask(images_dir, output_path, model_type):
     sdmg = General_SD.module_from_file("depthmap_for_depth2img", 'extensions/ebsynth_helper/scripts/depthmap_for_depth2img.py')
     sdmg = sdmg.SimpleDepthMapGenerator()
 
+    filename = ""
     for filename in filenames:
         # Check if file is an image (assumes only image files are in the folder)
         if (filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg')) and (not re.search(r'-\d', filename)):
@@ -166,7 +167,7 @@ def create_img_mask(images_dir, output_path, model_type):
                 mask_img.save(os.path.join(output_path, filename))
                 img.close()
 
-    return images
+    return os.path.join(output_path, filename)
 
 def pick_up_image(images_dir, output_path, rel_dir):
     if os.path.exists(output_path):
