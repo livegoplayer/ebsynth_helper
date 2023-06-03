@@ -194,8 +194,8 @@ def create_human_mask(images_dir, output_path, output_type, model_index):
     model = get_model(models[model_index])
 
     filename = ""
-    alpha_path_pre = output_path if not (output_type == 2) else os.path.join(images_dir, "mask")
-    img_path_pre = output_path if not (output_type == 2) else os.path.join(images_dir, "img_path")
+    alpha_path_pre = output_path if not (output_type == 2) else os.path.join(output_path, "mask")
+    img_path_pre = output_path if not (output_type == 2) else os.path.join(output_path, "img_path")
     if output_type == 2:
         if os.path.exists(alpha_path_pre):
             shutil.rmtree(alpha_path_pre, ignore_errors=True)
