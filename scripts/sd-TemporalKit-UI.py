@@ -43,7 +43,7 @@ import base64
 import io
 import scripts.Ebsynth_Helper as ebsynth
 import scripts.berry_utility_2 as sd_utility
-
+from scripts import mod_helper
 
 diffuseimg = None
 SamplerData = namedtuple('SamplerData', ['name', 'constructor', 'aliases', 'options'])
@@ -176,61 +176,31 @@ output_type: 0: only_mask
 output_type: 1: only_img
 output_type: 2: all
 """
-def create_human_mask(images_dir, output_path, output_type, model_index):
-    if os.path.exists(output_path):
-        shutil.rmtree(output_path, ignore_errors=True)
-    os.makedirs(output_path)
+def cutout_with_mask(images_dir, mask_dir, output_dir):
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir, ignore_errors=True)
+    os.makedirs(output_dir)
 
     if len(images_dir) == 0:
         raise Exception("no images in dir")
 
     filenames = os.listdir(images_dir)
-    models = ['modnet_photographic_portrait_matting.ckpt', 'modnet_webcam_portrait_matting.ckpt']
-
 
     # Sort filenames based on the order of the numbers in their names
     filenames.sort(key=natural_keys)
-    from MODNet_entry import get_model, infer2
-    model = get_model(models[model_index])
-
-    filename = ""
-    alpha_path_pre = output_path if not (output_type == 2) else os.path.join(output_path, "mask")
-    img_path_pre = output_path if not (output_type == 2) else os.path.join(output_path, "img_path")
-    if output_type == 2:
-        if os.path.exists(alpha_path_pre):
-            shutil.rmtree(alpha_path_pre, ignore_errors=True)
-        os.makedirs(alpha_path_pre)
-        if os.path.exists(img_path_pre):
-            shutil.rmtree(img_path_pre, ignore_errors=True)
-        os.makedirs(img_path_pre)
 
     for filename in filenames:
         # Check if file is an image (assumes only image files are in the folder)
         if (filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg')) and (not re.search(r'-\d', filename)):
                 input_path = os.path.join(images_dir, filename)
-                # img = Image.open(os.path.join(images_dir, filename))
-                # Convert image to NumPy array and append to images list
-                # image_now = np.array(img)
-                # img_y = image_now.shape[0]
-                # img_x = image_now.shape[1]
+                mask_path = os.path.join(mask_dir, filename)
+                output_path = os.path.join(output_dir, filename)
 
-                alpha_path = os.path.join(alpha_path_pre, filename)
-                img_path = os.path.join(img_path_pre, filename)
-                if output_type == 0:
-                    img_path = ""
-                if output_type == 1:
-                    alpha_path = ""
+                if not os.path.exists(mask_path):
+                    print("mask file for input_path is not exists, skip")
+                    continue
+                mod_helper.infer2(input_path, mask_path, output_path)
 
-                if len(alpha_path) > 0:
-                    print("save alpha to " + alpha_path)
-                if len(img_path) > 0:
-                    print("save img to " + img_path)
-
-                infer2(model, input_path, alpha_path, img_path)
-
-                # mask_img = General_SD.create_depth_mask_from_depth_map(d_m)
-                # mask_img.save(os.path.join(output_path, filename))
-                # img.close()
     print("done!!")
     return
 
@@ -794,12 +764,9 @@ def depth_mask_tab():
         outputs=outputFirstImage
         )
 
-def human_mask_tab():
+def cutout_with_mask_tab():
     with gr.Column(visible=True, elem_id="batch_process") as second_panel:
         with gr.Row():
-            types = ["only_mask","only_img","all"]
-            models = ['modnet_photographic_portrait_matting.ckpt', 'modnet_webcam_portrait_matting.ckpt']
-
             with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Generate"):
@@ -807,13 +774,9 @@ def human_mask_tab():
                             with gr.Row():
                                 images_dir = gr.Textbox(label="Input Folder",placeholder="原图目录")
                             with gr.Row():
+                                mask_dir = gr.Textbox(label="mask Folder", placeholder="mask 目录，需要对应名称，查不到的直接跳过")
+                            with gr.Row():
                                 output_folder = gr.Textbox(label="Output Folder", placeholder="输出目录，没有会自动创建，有会清空")
-                            with gr.Row():
-                                output_type = gr.Dropdown(label="type", choices=types, value="only_mask",
-                                                         type="index", elem_id="output_type")
-                            with gr.Row():
-                                model = gr.Dropdown(label="model", choices=models, value="modnet_webcam_portrait_matting.ckpt",
-                                                         type="index", elem_id="model")
                             with gr.Row():
                                 runButton = gr.Button("start crate mask", elem_id="run_button")
             with gr.Tabs(elem_id="mode_EbsyntHelper"):
@@ -823,8 +786,8 @@ def human_mask_tab():
                             outputFirstImage = gr.File()
 
         runButton.click(
-        fn=create_human_mask,
-        inputs=[images_dir, output_folder, output_type, model],
+        fn=cutout_with_mask,
+        inputs=[images_dir, mask_dir, output_folder],
         outputs=outputFirstImage
         )
 
@@ -861,18 +824,6 @@ def on_ui_tabs():
 
     with gr.Blocks(analytics_enabled=False) as EbsynthHelper:
         with gr.Tabs(elem_id="EbsynthHelper-Tab") as tabs:
-                # with gr.Tab(label="Pre-Processing"):
-                #     with gr.Blocks(analytics_enabled=False):
-                #         create_video_Processing_Tab()
-                # with gr.Tab(label="Temporal-Warp",elem_id="processbutton"):
-                #     with gr.Blocks(analytics_enabled=False):
-                #         create_diffusing_tab()
-                # with gr.Tab(label="Batch-Warp",elem_id="batch-button"):
-                #     with gr.Blocks(analytics_enabled=False):
-                #         create_batch_tab()
-                # with gr.Tab(label="Ebsynth-Process",elem_id="Ebsynth-Process"):
-                #     with gr.Blocks(analytics_enabled=False):
-                #         create_ebsynth_tab()
                 with gr.Tab(label="Ebsynth-Explode-Helper",elem_id="Ebsynth-Explode-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         explode_tab()
@@ -882,9 +833,9 @@ def on_ui_tabs():
                 with gr.Tab(label="Ebsynth-depth-Mask-Helper",elem_id="Ebsynth-Mask-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         depth_mask_tab()
-                with gr.Tab(label="Ebsynth-human-Mask-Helper",elem_id="Ebsynth-Mask-Helper"):
+                with gr.Tab(label="Ebsynth-Cutout_With_Mask-Helper",elem_id="Ebsynth-Mask-Helper"):
                     with gr.Blocks(analytics_enabled=False):
-                        human_mask_tab()
+                        cutout_with_mask_tab()
                 with gr.Tab(label="Ebsynth-Pick-Up-Helper", elem_id="Ebsynth-pick-up-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         pick_up_tab()
