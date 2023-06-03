@@ -196,6 +196,13 @@ def create_human_mask(images_dir, output_path, output_type, model_index):
     filename = ""
     alpha_path_pre = output_path if not (output_type == 2) else os.path.join(images_dir, "mask")
     img_path_pre = output_path if not (output_type == 2) else os.path.join(images_dir, "img_path")
+    if output_type == 2:
+        if os.path.exists(alpha_path_pre):
+            shutil.rmtree(alpha_path_pre, ignore_errors=True)
+        os.makedirs(alpha_path_pre)
+        if os.path.exists(img_path_pre):
+            shutil.rmtree(img_path_pre, ignore_errors=True)
+        os.makedirs(img_path_pre)
 
     for filename in filenames:
         # Check if file is an image (assumes only image files are in the folder)
@@ -213,13 +220,6 @@ def create_human_mask(images_dir, output_path, output_type, model_index):
                     img_path = ""
                 if output_type == 1:
                     alpha_path = ""
-                if output_type == 2:
-                    if os.path.exists(alpha_path):
-                        shutil.rmtree(alpha_path, ignore_errors=True)
-                    os.makedirs(alpha_path)
-                    if os.path.exists(img_path):
-                        shutil.rmtree(img_path, ignore_errors=True)
-                    os.makedirs(img_path)
 
                 if len(alpha_path) > 0:
                     print("save alpha to " + alpha_path)
