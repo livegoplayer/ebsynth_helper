@@ -232,7 +232,7 @@ def create_human_mask(images_dir, output_path, output_type, model_index):
                 # mask_img.save(os.path.join(output_path, filename))
                 # img.close()
     print("done!!")
-    return output_path
+    return
 
 def pick_up_image(images_dir, output_path, rel_dir):
     if os.path.exists(output_path):
