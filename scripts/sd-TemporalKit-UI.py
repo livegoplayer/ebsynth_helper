@@ -169,7 +169,7 @@ def create_img_mask(images_dir, output_path, model_type):
                 img.close()
     print("done!!")
 
-    return os.path.join(output_path, filename)
+    return
 
 """
 output_type: 0: only_mask
