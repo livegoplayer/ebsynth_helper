@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a96905a3-2c95-4644-b2a0-9a50edd44fbe" name="Changes" comment="修复bug">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="a96905a3-2c95-4644-b2a0-9a50edd44fbe" name="Changes" comment="添加人脸mask">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/install.py" beforeDir="false" afterPath="$PROJECT_DIR$/install.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/sd-TemporalKit-UI.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/sd-TemporalKit-UI.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +53,7 @@
       <workItem from="1684745559685" duration="1894000" />
       <workItem from="1684750574395" duration="3386000" />
       <workItem from="1684904378520" duration="331000" />
-      <workItem from="1685764867636" duration="4877000" />
+      <workItem from="1685764867636" duration="8065000" />
     </task>
     <task id="LOCAL-00001" summary="1">
       <created>1684483111224</created>
@@ -351,7 +349,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684904619654</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="添加人脸mask">
+      <created>1685769820961</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1685769820961</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -361,6 +366,7 @@
     <MESSAGE value="1" />
     <MESSAGE value="加了mask" />
     <MESSAGE value="修复bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="修复bug" />
+    <MESSAGE value="添加人脸mask" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加人脸mask" />
   </component>
 </project>
