@@ -169,6 +169,56 @@ def create_img_mask(images_dir, output_path, model_type):
 
     return os.path.join(output_path, filename)
 
+"""
+output_type: 0: only_mask
+output_type: 1: only_img
+output_type: 2: all
+"""
+def create_huamn_mask(images_dir, output_path, output_type):
+    if os.path.exists(output_path):
+        shutil.rmtree(output_path, ignore_errors=True)
+    os.makedirs(output_path)
+
+    if len(images_dir) == 0:
+        raise Exception("no images in dir")
+
+    filenames = os.listdir(images_dir)
+
+    # Sort filenames based on the order of the numbers in their names
+    filenames.sort(key=natural_keys)
+    from MODNet_entry import get_model, infer2
+    model = get_model('modnet_photographic_portrait_matting.ckpt')
+
+    filename = ""
+    alpha_path_pre = output_path if not (output_type == 2) else os.path.join(images_dir, "mask")
+    img_path_pre = output_path if not (output_type == 2) else os.path.join(images_dir, "img_path")
+
+    for filename in filenames:
+        # Check if file is an image (assumes only image files are in the folder)
+        if (filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg')) and (not re.search(r'-\d', filename)):
+                input_path = os.path.join(images_dir, filename)
+                # img = Image.open(os.path.join(images_dir, filename))
+                # Convert image to NumPy array and append to images list
+                # image_now = np.array(img)
+                # img_y = image_now.shape[0]
+                # img_x = image_now.shape[1]
+
+                alpha_path = os.path.join(alpha_path_pre, filename)
+                img_path = os.path.join(img_path_pre, filename)
+                if output_type == 0:
+                    img_path = ""
+                if output_type == 1:
+                    alpha_path = ""
+
+                infer2(model, input_path, alpha_path, img_path)
+
+                # mask_img = General_SD.create_depth_mask_from_depth_map(d_m)
+                # print("save mask to " + os.path.join(output_path, filename))
+                # mask_img.save(os.path.join(output_path, filename))
+                # img.close()
+
+    return os.path.join(output_path, filename)
+
 def pick_up_image(images_dir, output_path, rel_dir):
     if os.path.exists(output_path):
         shutil.rmtree(output_path, ignore_errors=True)
@@ -686,7 +736,7 @@ def merge_tab():
         inputs=[images_dir, row_sides, rol_sides, output_resolution, output_folder],
         outputs=outputFirstImage
         )
-def mask_tab():
+def depth_mask_tab():
     with gr.Column(visible=True, elem_id="batch_process") as second_panel:
         with gr.Row():
             models = ["dpt_beit_large_512",
@@ -726,6 +776,35 @@ def mask_tab():
         runButton.click(
         fn=create_img_mask,
         inputs=[images_dir, output_folder, model_type],
+        outputs=outputFirstImage
+        )
+
+def human_mask_tab():
+    with gr.Column(visible=True, elem_id="batch_process") as second_panel:
+        with gr.Row():
+            types = ["only_mask","only_img","all"]
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Generate"):
+                        with gr.Column():
+                            with gr.Row():
+                                images_dir = gr.Textbox(label="Input Folder",placeholder="原图目录")
+                            with gr.Row():
+                                output_folder = gr.Textbox(label="Output Folder", placeholder="输出目录，没有会自动创建，有会清空")
+                            with gr.Row():
+                                output_type = gr.Dropdown(label="type", choices=types, value="only_mask",
+                                                         type="index", elem_id="output_type")
+                            with gr.Row():
+                                runButton = gr.Button("start crate mask", elem_id="run_button")
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Output"):
+                        with gr.Column():
+                            outputFirstImage = gr.File()
+
+        runButton.click(
+        fn=create_huamn_mask,
+        inputs=[images_dir, output_folder, output_type],
         outputs=outputFirstImage
         )
 
@@ -780,9 +859,12 @@ def on_ui_tabs():
                 with gr.Tab(label="Ebsynth-Merge-Helper",elem_id="Ebsynth-Merge-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         merge_tab()
-                with gr.Tab(label="Ebsynth-Mask-Helper",elem_id="Ebsynth-Mask-Helper"):
+                with gr.Tab(label="Ebsynth-depth-Mask-Helper",elem_id="Ebsynth-Mask-Helper"):
                     with gr.Blocks(analytics_enabled=False):
-                        mask_tab()
+                        depth_mask_tab()
+                with gr.Tab(label="Ebsynth-human-Mask-Helper",elem_id="Ebsynth-Mask-Helper"):
+                    with gr.Blocks(analytics_enabled=False):
+                        human_mask_tab()
                 with gr.Tab(label="Ebsynth-Pick-Up-Helper", elem_id="Ebsynth-pick-up-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         pick_up_tab()
