@@ -136,6 +136,7 @@ def merge_image_to_square(images_dir, row_sides, rol_sides, resolution, output_p
         raise Exception("no images in dir")
 
     image = General_SD.merge_image_to_squares(square_textures, resolution, row_sides, rol_sides, output_path)
+    print("done!!")
     return image
 def create_img_mask(images_dir, output_path, model_type):
     if os.path.exists(output_path):
@@ -166,6 +167,7 @@ def create_img_mask(images_dir, output_path, model_type):
                 print("save mask to " + os.path.join(output_path, filename))
                 mask_img.save(os.path.join(output_path, filename))
                 img.close()
+    print("done!!")
 
     return os.path.join(output_path, filename)
 
@@ -174,7 +176,7 @@ output_type: 0: only_mask
 output_type: 1: only_img
 output_type: 2: all
 """
-def create_huamn_mask(images_dir, output_path, output_type):
+def create_human_mask(images_dir, output_path, output_type, model_name):
     if os.path.exists(output_path):
         shutil.rmtree(output_path, ignore_errors=True)
     os.makedirs(output_path)
@@ -187,7 +189,7 @@ def create_huamn_mask(images_dir, output_path, output_type):
     # Sort filenames based on the order of the numbers in their names
     filenames.sort(key=natural_keys)
     from MODNet_entry import get_model, infer2
-    model = get_model('modnet_photographic_portrait_matting.ckpt')
+    model = get_model(model_name)
 
     filename = ""
     alpha_path_pre = output_path if not (output_type == 2) else os.path.join(images_dir, "mask")
@@ -209,14 +211,25 @@ def create_huamn_mask(images_dir, output_path, output_type):
                     img_path = ""
                 if output_type == 1:
                     alpha_path = ""
+                if output_type == 2:
+                    if os.path.exists(alpha_path):
+                        shutil.rmtree(alpha_path, ignore_errors=True)
+                    os.makedirs(alpha_path)
+                    if os.path.exists(img_path):
+                        shutil.rmtree(img_path, ignore_errors=True)
+                    os.makedirs(img_path)
+
+                if len(alpha_path) > 0:
+                    print("save alpha to " + alpha_path)
+                if len(img_path) > 0:
+                    print("save img to " + img_path)
 
                 infer2(model, input_path, alpha_path, img_path)
 
                 # mask_img = General_SD.create_depth_mask_from_depth_map(d_m)
-                # print("save mask to " + os.path.join(output_path, filename))
                 # mask_img.save(os.path.join(output_path, filename))
                 # img.close()
-
+    print("done!!")
     return os.path.join(output_path, filename)
 
 def pick_up_image(images_dir, output_path, rel_dir):
@@ -240,7 +253,7 @@ def pick_up_image(images_dir, output_path, rel_dir):
         print("from " + os.path.join(images_dir, filename) + " to " + os.path.join(output_path, filename))
         img = Image.open(os.path.join(images_dir, filename))
         img.save(os.path.join(output_path, filename))
-
+    print("done!!")
     return os.path.join(output_path, filename)
 
 # def apply_image_to_video(image,video,fps,per_side,output_resolution,batch_size):
@@ -783,6 +796,8 @@ def human_mask_tab():
     with gr.Column(visible=True, elem_id="batch_process") as second_panel:
         with gr.Row():
             types = ["only_mask","only_img","all"]
+            models = ['modnet_photographic_portrait_matting.ckpt', 'modnet_webcam_portrait_matting.ckpt']
+
             with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Generate"):
@@ -795,6 +810,9 @@ def human_mask_tab():
                                 output_type = gr.Dropdown(label="type", choices=types, value="only_mask",
                                                          type="index", elem_id="output_type")
                             with gr.Row():
+                                model = gr.Dropdown(label="model", choices=models, value="modnet_webcam_portrait_matting.ckpt",
+                                                         type="index", elem_id="model")
+                            with gr.Row():
                                 runButton = gr.Button("start crate mask", elem_id="run_button")
             with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
@@ -803,8 +821,8 @@ def human_mask_tab():
                             outputFirstImage = gr.File()
 
         runButton.click(
-        fn=create_huamn_mask,
-        inputs=[images_dir, output_folder, output_type],
+        fn=create_human_mask,
+        inputs=[images_dir, output_folder, output_type, model],
         outputs=outputFirstImage
         )
 
