@@ -176,7 +176,7 @@ output_type: 0: only_mask
 output_type: 1: only_img
 output_type: 2: all
 """
-def create_human_mask(images_dir, output_path, output_type, model_name):
+def create_human_mask(images_dir, output_path, output_type, model_index):
     if os.path.exists(output_path):
         shutil.rmtree(output_path, ignore_errors=True)
     os.makedirs(output_path)
@@ -185,11 +185,13 @@ def create_human_mask(images_dir, output_path, output_type, model_name):
         raise Exception("no images in dir")
 
     filenames = os.listdir(images_dir)
+    models = ['modnet_photographic_portrait_matting.ckpt', 'modnet_webcam_portrait_matting.ckpt']
+
 
     # Sort filenames based on the order of the numbers in their names
     filenames.sort(key=natural_keys)
     from MODNet_entry import get_model, infer2
-    model = get_model(model_name)
+    model = get_model(models[model_index])
 
     filename = ""
     alpha_path_pre = output_path if not (output_type == 2) else os.path.join(images_dir, "mask")
