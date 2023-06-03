@@ -1,14 +1,4 @@
-import os
-
-import numpy as np
-from PIL import Image
 import cv2
-
-from MODNet_entry.MODNet.src.models.modnet import MODNet
-
-
-_here = os.path.dirname(os.path.abspath(__file__))
-
 
 def infer2(img_path: str, mask_path: str = '', out_img_path: str = ''):
 
