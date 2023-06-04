@@ -1,14 +1,149 @@
+import shutil
+
 import cv2
 import numpy as np
+import os
 
 
 def infer2(img_path: str, mask_path: str = '', out_img_path: str = ''):
-
     # 使用opencv叠加图片
     img1 = cv2.imread(img_path)
     img2 = cv2.imread(mask_path)
     # 反转
     matrix = 255 - np.asarray(img2)
     image = cv2.add(img1, matrix)
-    print("save image to " + out_img_path)
-    cv2.imwrite(out_img_path, image)
+
+    save(to_transparent(image), out_img_path)
+
+
+def split_by_mask(img_path: str, mask_path: str = '', output_dir: str = ''):
+    # 使用opencv叠加图片
+    img1 = cv2.imread(img_path)
+    img2 = cv2.imread(mask_path)
+    # 反转
+    matrix = 255 - np.asarray(img2)
+    mainImage = cv2.add(img1, matrix)
+    subImage = cv2.add(img1, img2)
+
+    mainImagePath = os.path.join(output_dir, "main_image")
+    subImagePath = os.path.join(output_dir, "sub_image")
+
+    if os.path.exists(mainImagePath):
+        shutil.rmtree(mainImagePath, ignore_errors=True)
+    os.makedirs(mainImagePath)
+
+    if os.path.exists(subImagePath):
+        shutil.rmtree(subImagePath, ignore_errors=True)
+    os.makedirs(subImagePath)
+    save(mainImagePath, to_transparent(mainImage))
+    save(subImagePath, to_transparent(subImage))
+
+
+def save(img, img_path):
+    print("save image to " + img_path)
+    cv2.imwrite(img_path, img)
+
+
+# 白色转透明
+def to_transparent(image):
+    bigimg4 = np.ones((image.shape[0], image.shape[1], 4)) * 255  # 4通道底图，第4个通道设为透明度
+    xs, ys = np.where(np.sum(image, axis=2) == 255 * 3)  # 前三个通道均为 255 的像素点，设为透明
+
+    for x, y in zip(xs, ys):
+        bigimg4[x, y, 3] = 0
+    return bigimg4
+
+
+def adjust_mask(mainPreImagePath, preSubImagePath, adjustmentImagePath, output_dir):
+    mainPreImage = cv2.imread(mainPreImagePath)
+    preSubImage = cv2.imread(preSubImagePath)
+    adjustmentImage = cv2.imread(adjustmentImagePath)
+
+    # 校验
+    height = adjustmentImage.shape[0]  # 将tuple中的元素取出，赋值给height，width，channels
+    width = adjustmentImage.shape[1]
+
+    if preSubImage.shape[0] != height or preSubImage.shape[1] != width:
+        print(
+            "the preSubImage " + preSubImage + "does not match the size of " + "[" + width + "," + height + "]" + " path= " + adjustmentImage)
+        print("skip")
+
+    if mainPreImage.shape[0] != height or mainPreImage.shape[1] != width:
+        print(
+            "the mainPreImage " + mainPreImage + "does not match the size of " + "[" + width + "," + height + "]" + " path= " + adjustmentImage)
+        print("skip")
+
+    adjustmentImageMask = foreground_to_mask(adjustmentImage)
+    preSubImageMask = foreground_to_mask(preSubImage)
+    mainPreImageMask = foreground_to_mask(mainPreImage)
+
+    height = adjustmentImageMask.shape[0]
+    width = adjustmentImageMask.shape[1]
+
+    # 这里是针对main图像的命名方法，到sub中会取反
+    white_change_group = []
+    black_change_group = []
+    for row in range(height):  # 遍历每一行
+        for col in range(width):
+            if adjustmentImageMask[row][col] != mainPreImage[row][col]:
+                if np.sum(adjustmentImageMask[row][col]) < 255 * 3:
+                    if np.sum(mainPreImageMask[row][col]) == 255 * 3:
+                        black_change_group.append([row, col])
+                else:
+                    if np.sum(mainPreImageMask[row][col]) < 255 * 3:
+                        white_change_group.append([row, col])
+
+    for x, y in white_change_group:
+        preSubImageMask[x, y] = [0, 0, 0]
+
+    for x, y in black_change_group:
+        preSubImageMask[x, y] = [255, 255, 255]
+
+    outputMainMask = adjustmentImageMask
+    outputSubMask = preSubImageMask
+
+    mainImagePath = os.path.join(output_dir, "main_mask")
+    subImagePath = os.path.join(output_dir, "sub_mask")
+
+    if os.path.exists(mainImagePath):
+        shutil.rmtree(mainImagePath, ignore_errors=True)
+    os.makedirs(mainImagePath)
+
+    if os.path.exists(subImagePath):
+        shutil.rmtree(subImagePath, ignore_errors=True)
+    os.makedirs(subImagePath)
+    save(mainImagePath, outputMainMask)
+    save(subImagePath, outputSubMask)
+
+
+def foreground_to_mask(image):
+    # 如果三通道，就取白色
+    # bigimg4 = np.ones((image.shape[0], image.shape[1], 3))
+    bigimg4 = np.zeros((image.shape[0], image.shape[1], 3), dtype=np.uint8)
+
+    if len(image.shape) == 3:
+        # xs, ys = np.where(not np.sum(image, axis=2) == 0 * 3)  # 前三个通道均为 255 的像素点，设为透明
+        not_white_pixels = np.where(not (
+                (image[:, :, 0] == 255) &
+                (image[:, :, 1] == 255) &
+                (image[:, :, 2] == 255))
+                                    )
+        # set those pixels to black
+        bigimg4[not_white_pixels] = [0, 0, 0]
+
+    # 如果四通道，先判断透明度是否有透明，再决定取值
+    if len(image.shape) == 4:
+        not_show_pixels = np.where(image[:, :, 3] != 255)
+        if len(not_show_pixels) != 0:
+            bigimg4[not_show_pixels] = [0, 0, 0]
+        else:
+            not_white_pixels = np.where(not (
+                    (image[:, :, 0] == 255) &
+                    (image[:, :, 1] == 255) &
+                    (image[:, :, 2] == 255))
+                                        )
+            bigimg4[not_white_pixels] = [0, 0, 0]
+
+        # for x, y in zip(xs, ys):
+        #   bigimg4[x, y] = [255, 255, 255]
+    return bigimg4

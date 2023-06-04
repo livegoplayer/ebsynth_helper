@@ -171,11 +171,6 @@ def create_img_mask(images_dir, output_path, model_type):
 
     return
 
-"""
-output_type: 0: only_mask
-output_type: 1: only_img
-output_type: 2: all
-"""
 def cutout_with_mask(images_dir, mask_dir, output_dir):
     if os.path.exists(output_dir):
         shutil.rmtree(output_dir, ignore_errors=True)
@@ -203,6 +198,99 @@ def cutout_with_mask(images_dir, mask_dir, output_dir):
 
     print("done!!")
     return
+
+def split_img_by_mask(cutout_images_dir, split_mask_dir, output_dir):
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir, ignore_errors=True)
+    os.makedirs(output_dir)
+
+    if len(cutout_images_dir) == 0:
+        raise Exception("no images in dir")
+
+    if len(split_mask_dir) == 0:
+        raise Exception("no split mask dir")
+
+    filenames = os.listdir(cutout_images_dir)
+
+    masknames = os.listdir(split_mask_dir)
+
+    # Sort filenames based on the order of the numbers in their names
+    filenames.sort(key=natural_keys)
+    masknames.sort(key=natural_keys)
+
+    if len(masknames) == 0:
+        raise Exception("split mask dir is empty")
+
+    for filename in filenames:
+        # Check if file is an image (assumes only image files are in the folder)
+        if (filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg')) and (not re.search(r'-\d', filename)):
+                maskName = get_ref_mask_name_by_image_name(filename, masknames)
+                if maskName == "skip32132132":
+                    print("can not match the mask of " + filename)
+                    continue
+
+                input_path = os.path.join(cutout_images_dir, filename)
+                mask_path = os.path.join(split_mask_dir, maskName)
+                output_path = os.path.join(output_dir, filename)
+
+                print("generate img " + filename + "by mask " + maskName)
+                mod_helper.split_by_mask(input_path, mask_path, output_path)
+
+    print("done!!")
+    return
+
+def adjust_mask_by_split_img(pre_output_folder, adjustment_img_dir, output_dir):
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir, ignore_errors=True)
+    os.makedirs(output_dir)
+
+    if len(pre_output_folder) == 0:
+        raise Exception("no pre_output dir")
+
+    pre_main_img_path = os.path.join(pre_output_folder, "main_image")
+    pre_sub_img_path = os.path.join(pre_output_folder, "sub_image")
+
+    mainPreImages = os.listdir(pre_main_img_path)
+    subPreImages = os.listdir(pre_sub_img_path)
+
+    if len(mainPreImages) == 0:
+        raise Exception("no images in main img dir")
+
+    if len(subPreImages) == 0:
+        raise Exception("no images in sub img dir")
+
+    mainPreImages.sort(key=natural_keys)
+    subPreImages.sort(key=natural_keys)
+
+    if len(adjustment_img_dir) == 0:
+        raise Exception("no adjustment img dir")
+
+    adjustmentImages = os.listdir(adjustment_img_dir)
+    adjustmentImages.sort(key=natural_keys)
+
+    for filename in adjustmentImages:
+        # Check if file is an image (assumes only image files are in the folder)
+        if (filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg')) and (not re.search(r'-\d', filename)):
+            mainPreImagePath = os.path.join(pre_main_img_path, filename)
+            preSubImagePath = os.path.join(pre_sub_img_path, filename)
+            adjustmentImagePath = os.path.join(adjustment_img_dir, filename)
+            print("generate img " + filename + "by mask " + adjustmentImagePath)
+
+            if not os.path.exists(mainPreImagePath):
+                print("the main pre img for filename is not exists path = " + mainPreImagePath)
+                print("skip")
+                continue
+
+            if not os.path.exists(preSubImagePath):
+                print("the main sub img for filename is not exists path = " + preSubImagePath)
+                print("skip")
+                continue
+
+            mod_helper.adjust_mask(mainPreImagePath, preSubImagePath, adjustmentImagePath)
+
+    print("done!!")
+    return
+
 
 def pick_up_image(images_dir, output_path, rel_dir):
     if os.path.exists(output_path):
@@ -282,6 +370,22 @@ def split_square_images_to_singles(keys_rel_dir, square_text_dir, row_sides, rol
     square_textures = read_images_folder(square_text_dir)
     ebsynth.split_square_images_to_singles(keys_rel_dir, row_sides, rol_sides, _smol_resolution,output_folder, square_textures)
     return
+
+def get_ref_mask_name_by_image_name(imgName, maskList):
+    newList = maskList[:]
+    newList.append(imgName)
+    newList.sort(key=natural_keys)
+
+    for index in range(len(newList)):
+        if newList[index] == imgName:
+            if index < len(newList) - 1 and newList[index] == newList[index + 1]:
+                return imgName
+            else:
+                if index == 0:
+                    return "skip32132132"
+                return newList[index - 1]
+
+
 
 # def recombine_ebsynth(input_folder,fps,border_frames,batch):
 #     if os.path.exists(os.path.join(input_folder, "keys")):
@@ -790,6 +894,59 @@ def cutout_with_mask_tab():
         inputs=[images_dir, mask_dir, output_folder],
         outputs=outputFirstImage
         )
+def split_img_by_mask_tab():
+    with gr.Column(visible=True, elem_id="batch_process") as second_panel:
+        with gr.Row():
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Generate"):
+                        with gr.Column():
+                            with gr.Row():
+                                cutout_images_dir = gr.Textbox(label="cutout images",placeholder="原图抠像出来的图片目录")
+                            with gr.Row():
+                                split_mask_dir = gr.Textbox(label="mask dir",placeholder="用来分割图片的mask目录")
+                            with gr.Row():
+                                output_folder = gr.Textbox(label="Output Folder", placeholder="输出目录，没有会自动创建，有会清空")
+                            with gr.Row():
+                                runButton = gr.Button("start split", elem_id="run_button")
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Output"):
+                        with gr.Column():
+                            outputFirstImage = gr.File()
+
+        runButton.click(
+        fn=split_img_by_mask,
+        inputs=[cutout_images_dir, split_mask_dir, output_folder],
+        outputs=outputFirstImage
+        )
+
+def adjust_mask_by_split_img_tag():
+    with gr.Column(visible=True, elem_id="batch_process") as second_panel:
+        with gr.Row():
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Generate"):
+                        with gr.Column():
+                            with gr.Row():
+                                pre_output_folder = gr.Textbox(label="pre output folder",placeholder="用 split_img_by_mask tab 的输出目录")
+                            with gr.Row():
+                                adjustment_img_dir = gr.Textbox(label="adjustment img dir",placeholder="手动调整之后的前景图目录")
+                            with gr.Row():
+                                output_folder = gr.Textbox(label="Output Folder", placeholder="输出目录，没有会自动创建，有会清空")
+                            with gr.Row():
+                                runButton = gr.Button("start split", elem_id="run_button")
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Output"):
+                        with gr.Column():
+                            outputFirstImage = gr.File()
+
+        runButton.click(
+        fn=adjust_mask_by_split_img,
+        inputs=[pre_output_folder, adjustment_img_dir, output_folder],
+        outputs=outputFirstImage
+        )
 
 def pick_up_tab():
     with gr.Column(visible=True, elem_id="batch_process") as second_panel:
@@ -824,19 +981,25 @@ def on_ui_tabs():
 
     with gr.Blocks(analytics_enabled=False) as EbsynthHelper:
         with gr.Tabs(elem_id="EbsynthHelper-Tab") as tabs:
-                with gr.Tab(label="Ebsynth-Explode-Helper",elem_id="Ebsynth-Explode-Helper"):
+                with gr.Tab(label="Explode",elem_id="Ebsynth-Explode-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         explode_tab()
-                with gr.Tab(label="Ebsynth-Merge-Helper",elem_id="Ebsynth-Merge-Helper"):
+                with gr.Tab(label="Merge",elem_id="Ebsynth-Merge-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         merge_tab()
-                with gr.Tab(label="Ebsynth-depth-Mask-Helper",elem_id="Ebsynth-Mask-Helper"):
+                with gr.Tab(label="depth-Mask",elem_id="Ebsynth-depth-Mask-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         depth_mask_tab()
-                with gr.Tab(label="Ebsynth-Cutout_With_Mask-Helper",elem_id="Ebsynth-Mask-Helper"):
+                with gr.Tab(label="Cutout-With-Mask",elem_id="Ebsynth-Cutout-With-Mask-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         cutout_with_mask_tab()
-                with gr.Tab(label="Ebsynth-Pick-Up-Helper", elem_id="Ebsynth-pick-up-Helper"):
+                with gr.Tab(label="Split-With-Mask",elem_id="Ebsynth-Split-With-Mask-Helper"):
+                    with gr.Blocks(analytics_enabled=False):
+                        split_img_by_mask_tab()
+                with gr.Tab(label="Adjust-Mask",elem_id="Ebsynth-Adjust-Mask-Helper"):
+                    with gr.Blocks(analytics_enabled=False):
+                        adjust_mask_by_split_img_tag()
+                with gr.Tab(label="Pick-Up", elem_id="Ebsynth-pick-up-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         pick_up_tab()
         return (EbsynthHelper, "Ebsynth-Helper", "EbsynthHelper"),
