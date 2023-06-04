@@ -935,7 +935,7 @@ def adjust_mask_by_split_img_tag():
                             with gr.Row():
                                 output_folder = gr.Textbox(label="Output Folder", placeholder="输出目录，没有会自动创建，有会清空")
                             with gr.Row():
-                                runButton = gr.Button("start split", elem_id="run_button")
+                                runButton = gr.Button("start adjust", elem_id="run_button")
             with gr.Tabs(elem_id="mode_EbsyntHelper"):
                 with gr.Row():
                     with gr.Tab(elem_id="input_diffuse", label="Output"):
