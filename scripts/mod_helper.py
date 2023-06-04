@@ -180,16 +180,21 @@ def cutout_by_mask(image, mask):
         bigimg4[:, :, :3] = image
         for i in range(height):
             for j in range(width):
-                if mask[i, j].tolist() != [255.0, 255.0, 255.0]:
+                if mask[i, j].tolist() == [255.0, 255.0, 255.0]:
                     bigimg4[i, j, 3] = 255
 
     # 透明遮罩
     if channels == 4:
-        bigimg4[:, :, :3] = image
-        for i in range(height):
-            for j in range(width):
-                if mask[i, j, 3] == 0:
-                    bigimg4[i, j, 3] = 255
+        bigimg4[:, :, :] = image
+        not_show_pixels = np.where(mask[:, :, 3] == 0)
+        if len(list(not_show_pixels)) >= 0 and len(list(not_show_pixels[0])) > 0:
+            show_pixels = np.where(image[:, :, 3] == 255)
+            bigimg4[show_pixels, 3] = 255
+        else:
+            for i in range(height):
+                for j in range(width):
+                    if mask[i, j, :3].tolist() == [255.0, 255.0, 255.0]:
+                        bigimg4[i, j, 3] = 255
 
 def foreground_to_mask(image):
     # 如果三通道，就取白色
@@ -202,21 +207,21 @@ def foreground_to_mask(image):
         for i in range(height):
             for j in range(width):
                 if image[i, j, :].tolist() != [255.0, 255.0, 255.0]:
-                    bigimg4[i, j, :] = np.array([0, 0, 0])
+                    bigimg4[i, j, :] = np.array([255, 255, 255])
 
     # 如果四通道，先判断透明度是否有透明，再决定取值
     if channels == 4:
         not_show_pixels = np.where(image[:, :, 3] != 255)
-        print(not_show_pixels)
         if len(list(not_show_pixels)) >= 0 and len(list(not_show_pixels[0])) > 0:
-            bigimg4[not_show_pixels] = [0, 0, 0]
+            show_pixels = np.where(image[:, :, 3] == 255)
+            bigimg4[show_pixels] = [255, 255, 255]
         else:
             height, width, channels = image.shape
             bigimg4[:, :, :] = image[:, :, :3]
             for i in range(height):
                 for j in range(width):
                     if image[i, j, :].tolist() != [255.0, 255.0, 255.0]:
-                        bigimg4[i, j, :] = np.array([0, 0, 0])
+                        bigimg4[i, j, :] = np.array([255, 255, 255])
 
         # for x, y in zip(xs, ys):
         #   bigimg4[x, y] = [255, 255, 255]
