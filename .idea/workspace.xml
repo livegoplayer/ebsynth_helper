@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a96905a3-2c95-4644-b2a0-9a50edd44fbe" name="Changes" comment="添加人像mask">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/mod_helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/mod_helper.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,14 +62,7 @@
       <workItem from="1685782381290" duration="225000" />
       <workItem from="1685789526244" duration="4197000" />
       <workItem from="1685839177225" duration="14260000" />
-      <workItem from="1685877817528" duration="5526000" />
-    </task>
-    <task id="LOCAL-00017" summary="1">
-      <created>1684488713994</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1684488713994</updated>
+      <workItem from="1685877817528" duration="5874000" />
     </task>
     <task id="LOCAL-00018" summary="1">
       <created>1684488960240</created>
@@ -407,7 +400,14 @@
       <option name="project" value="LOCAL" />
       <updated>1685883592781</updated>
     </task>
-    <option name="localTasksCounter" value="66" />
+    <task id="LOCAL-00066" summary="添加人像mask">
+      <created>1685883597242</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1685883597242</updated>
+    </task>
+    <option name="localTasksCounter" value="67" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
