@@ -131,7 +131,7 @@ def generate_sub_by_foreground_img(imgPath, mainImgPath, subOutputPath):
     imgMaskDir = os.path.join(imgPathDir, "mask")
     if not os.path.exists(imgMaskDir):
         os.makedirs(imgMaskDir)
-    imgMaskDirPath = os.path.join(imgPathDir, filename)
+    imgMaskDirPath = os.path.join(imgMaskDir, filename)
     if os.path.exists(imgMaskDirPath):
         os.remove(imgMaskDirPath)
 
