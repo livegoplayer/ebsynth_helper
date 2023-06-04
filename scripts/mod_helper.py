@@ -201,7 +201,6 @@ def foreground_to_mask(image):
     # bigimg4 = np.ones((image.shape[0], image.shape[1], 3))
     bigimg4 = np.zeros((image.shape[0], image.shape[1], 3), dtype=np.uint8)
     height, width, channels = image.shape
-    print(channels)
     if channels == 3:
         bigimg4[:, :, :] = image
         for i in range(height):
