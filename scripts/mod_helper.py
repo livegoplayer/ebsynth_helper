@@ -177,24 +177,23 @@ def cutout_by_mask(image, mask):
     height, width, channels = mask.shape
     # 黑白遮罩
     if channels == 3:
-        bigimg4[:, :, :3] = image
+        bigimg4[:, :, :] = image[:, :, :]
         for i in range(height):
             for j in range(width):
-                if mask[i, j].tolist() == [255.0, 255.0, 255.0]:
-                    bigimg4[i, j, 3] = 255
+                if mask[i, j].tolist() != [255.0, 255.0, 255.0]:
+                    bigimg4[i, j, 3] = 0
 
     # 透明遮罩
     if channels == 4:
         bigimg4[:, :, :] = image
         not_show_pixels = np.where(mask[:, :, 3] == 0)
         if len(list(not_show_pixels)) >= 0 and len(list(not_show_pixels[0])) > 0:
-            show_pixels = np.where(image[:, :, 3] == 255)
-            bigimg4[show_pixels, 3] = 255
+            bigimg4[not_show_pixels, 3] = 0
         else:
             for i in range(height):
                 for j in range(width):
-                    if mask[i, j, :3].tolist() == [255.0, 255.0, 255.0]:
-                        bigimg4[i, j, 3] = 255
+                    if mask[i, j, :3].tolist() != [255.0, 255.0, 255.0]:
+                        bigimg4[i, j, 3] = 0
 
 def foreground_to_mask(image):
     # 如果三通道，就取白色
