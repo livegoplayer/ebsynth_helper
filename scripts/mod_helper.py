@@ -161,7 +161,8 @@ def generate_sub_by_foreground_img(imgPath, mainImgPath, subOutputPath):
         subOutputImg = img
     else:
         # main 反过来，然后使用main的反遮罩取raw的mask
-        subOutputImg = cutout_by_mask(img, mainMask)
+        matrix = 255 - np.asarray(mainMask)
+        subOutputImg = cutout_by_mask(img, matrix)
 
     subOutputImgMask = foreground_to_mask(subOutputImg)
 

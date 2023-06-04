@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="a96905a3-2c95-4644-b2a0-9a50edd44fbe" name="Changes" comment="添加人像mask">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/mod_helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/mod_helper.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,35 +62,8 @@
       <workItem from="1685782381290" duration="225000" />
       <workItem from="1685789526244" duration="4197000" />
       <workItem from="1685839177225" duration="14260000" />
-      <workItem from="1685877817528" duration="13396000" />
-    </task>
-    <task id="LOCAL-00029" summary="1">
-      <created>1684495134027</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1684495134027</updated>
-    </task>
-    <task id="LOCAL-00030" summary="1">
-      <created>1684495305750</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1684495305750</updated>
-    </task>
-    <task id="LOCAL-00031" summary="1">
-      <created>1684495567219</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1684495567219</updated>
-    </task>
-    <task id="LOCAL-00032" summary="1">
-      <created>1684495725552</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1684495725552</updated>
+      <workItem from="1685877817528" duration="14548000" />
+      <workItem from="1685893130588" duration="593000" />
     </task>
     <task id="LOCAL-00033" summary="加了mask">
       <created>1684741936819</created>
@@ -408,7 +380,35 @@
       <option name="project" value="LOCAL" />
       <updated>1685890575034</updated>
     </task>
-    <option name="localTasksCounter" value="78" />
+    <task id="LOCAL-00078" summary="添加人像mask">
+      <created>1685891908720</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1685891908720</updated>
+    </task>
+    <task id="LOCAL-00079" summary="添加人像mask">
+      <created>1685892133969</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1685892133969</updated>
+    </task>
+    <task id="LOCAL-00080" summary="添加人像mask">
+      <created>1685892319406</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1685892319406</updated>
+    </task>
+    <task id="LOCAL-00081" summary="添加人像mask">
+      <created>1685892599395</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1685892599395</updated>
+    </task>
+    <option name="localTasksCounter" value="82" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
