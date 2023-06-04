@@ -116,6 +116,56 @@ def adjust_mask(mainPreImagePath, preSubImagePath, adjustmentImagePath, output_d
     save(subImagePath, outputSubMask)
 
 
+def generate_sub_by_foreground_img(imgPath, mainImgPath, subOutputPath):
+    img = cv2.imread(imgPath)
+    mainImg = cv2.imread(mainImgPath)
+    imgMask = foreground_to_mask(img)
+    mainMask = foreground_to_mask(mainImg)
+
+    imgPathDir, filename = os.path.split(imgPath)
+    imgMaskDir = os.path.join(imgPathDir, "mask")
+    if not os.path.exists(imgMaskDir):
+        os.makedirs(imgMaskDir)
+    imgMaskDirPath = os.path.join(imgPathDir, filename)
+    if os.path.exists(imgMaskDirPath):
+        os.remove(imgMaskDirPath)
+
+    mainImgPathDir, filename = os.path.split(mainImgPath)
+    mainMaskDir = os.path.join(mainImgPathDir, "mask")
+    if not os.path.exists(mainMaskDir):
+        os.makedirs(mainMaskDir)
+    mainMaskDirPath = os.path.join(mainMaskDir, filename)
+    if os.path.exists(mainMaskDirPath):
+        os.remove(mainMaskDirPath)
+
+    subMaskDir = os.path.join(subOutputPath, "mask")
+    if not os.path.exists(subMaskDir):
+        os.makedirs(subMaskDir)
+    subMaskDirPath = os.path.join(subMaskDir, filename)
+
+    height = img.shape[0]
+    width = img.shape[1]
+    if mainImg.shape[0] != height or mainImg.shape[1] != width:
+        print(
+            "the mainImg " + mainImgPath + "does not match the size of " + "[" + width + "," + height + "]" + " path= " + imgPath)
+        print("skip")
+
+    if not os.path.exists(mainImgPath):
+        print("the main img for " + imgPath + " is not exists path = " + mainImgPath)
+        print("use the raw img as sub img")
+        subOutputImg = img
+    else:
+        # main 反过来，然后使用main的反遮罩取raw的mask
+        matrix = 255 - np.asarray(mainMask)
+        subOutputImg = cv2.add(img, matrix)
+
+    subOutputImgMask = foreground_to_mask(subOutputImg)
+
+    save(imgMask, imgMaskDirPath)
+    save(mainMask, mainMaskDirPath)
+    save(subOutputPath, subOutputImg)
+    save(subMaskDirPath, subOutputImgMask)
+
 def foreground_to_mask(image):
     # 如果三通道，就取白色
     # bigimg4 = np.ones((image.shape[0], image.shape[1], 3))

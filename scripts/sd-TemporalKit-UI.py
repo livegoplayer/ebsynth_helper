@@ -291,6 +291,38 @@ def adjust_mask_by_split_img(pre_output_folder, adjustment_img_dir, output_dir):
     print("done!!")
     return
 
+def gennerate_imgs_by_foreground_imgs(img_dir, main_img_dir, output_dir):
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir, ignore_errors=True)
+    os.makedirs(output_dir)
+
+    if len(img_dir) == 0:
+        raise Exception("no pre_output dir")
+
+    if len(main_img_dir) == 0:
+        raise Exception("no main_img dir")
+
+    imgs = os.listdir(img_dir)
+
+    if len(imgs) == 0:
+        raise Exception("no images in main img dir")
+
+    imgs.sort(key=natural_keys)
+
+    for filename in imgs:
+        # Check if file is an image (assumes only image files are in the folder)
+        if (filename.endswith('.jpg') or filename.endswith('.png') or filename.endswith('.jpeg')) and (not re.search(r'-\d', filename)):
+            imgPath = os.path.join(img_dir, filename)
+            mainImgPath = os.path.join(main_img_dir, filename)
+            subOutputPath = os.path.join(output_dir, filename)
+
+            print("generate img " + filename)
+            mod_helper.generate_sub_by_foreground_img(imgPath, mainImgPath, subOutputPath)
+
+    print("done!!")
+    return
+
+
 
 def pick_up_image(images_dir, output_path, rel_dir):
     if os.path.exists(output_path):
@@ -948,6 +980,33 @@ def adjust_mask_by_split_img_tag():
         outputs=outputFirstImage
         )
 
+def adjust_mask_by_foreground_img_tab():
+    with gr.Column(visible=True, elem_id="batch_process") as second_panel:
+        with gr.Row():
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Generate"):
+                        with gr.Column():
+                            with gr.Row():
+                                img_dir = gr.Textbox(label="img dir",placeholder="前景图片目录")
+                            with gr.Row():
+                                main_img_dir = gr.Textbox(label="main_img_dir",placeholder="主要对象的前景图目录")
+                            with gr.Row():
+                                output_folder = gr.Textbox(label="Output Folder", placeholder="输出目录，没有会自动创建，有会清空")
+                            with gr.Row():
+                                runButton = gr.Button("start adjust", elem_id="run_button")
+            with gr.Tabs(elem_id="mode_EbsyntHelper"):
+                with gr.Row():
+                    with gr.Tab(elem_id="input_diffuse", label="Output"):
+                        with gr.Column():
+                            outputFirstImage = gr.File()
+
+        runButton.click(
+        fn=gennerate_imgs_by_foreground_imgs,
+        inputs=[img_dir, main_img_dir, output_folder],
+        outputs=outputFirstImage
+        )
+
 def pick_up_tab():
     with gr.Column(visible=True, elem_id="batch_process") as second_panel:
         with gr.Row():
@@ -999,6 +1058,9 @@ def on_ui_tabs():
                 with gr.Tab(label="Adjust-Mask",elem_id="Ebsynth-Adjust-Mask-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         adjust_mask_by_split_img_tag()
+                with gr.Tab(label="Adjust-Foreground-Img",elem_id="EbsynthAdjust-Foreground-Img-Helper"):
+                    with gr.Blocks(analytics_enabled=False):
+                        adjust_mask_by_foreground_img_tab()
                 with gr.Tab(label="Pick-Up", elem_id="Ebsynth-pick-up-Helper"):
                     with gr.Blocks(analytics_enabled=False):
                         pick_up_tab()
