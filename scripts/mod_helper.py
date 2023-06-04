@@ -13,7 +13,7 @@ def infer2(img_path: str, mask_path: str = '', out_img_path: str = ''):
     matrix = 255 - np.asarray(img2)
     image = cv2.add(img1, matrix)
 
-    save(to_transparent(image), out_img_path)
+    save(out_img_path ,to_transparent(image))
 
 
 def split_by_mask(img_path: str, mask_path: str = '', output_dir: str = ''):
@@ -39,7 +39,7 @@ def split_by_mask(img_path: str, mask_path: str = '', output_dir: str = ''):
     save(subImagePath, to_transparent(subImage))
 
 
-def save(img, img_path):
+def save(img_path, img):
     print("save image to " + img_path)
     cv2.imwrite(img_path, img)
 
@@ -166,8 +166,8 @@ def generate_sub_by_foreground_img(imgPath, mainImgPath, subOutputPath):
 
     subOutputImgMask = foreground_to_mask(subOutputImg)
 
-    save(imgMask, imgMaskDirPath)
-    save(mainMask, mainMaskDirPath)
+    save(imgMaskDirPath, imgMask)
+    save(mainMaskDirPath, mainMask)
     save(subOutputPath, subOutputImg)
     save(subMaskDirPath, subOutputImgMask)
 
@@ -178,7 +178,7 @@ def foreground_to_mask(image):
 
     if len(image.shape) == 3:
         # xs, ys = np.where(not np.sum(image, axis=2) == 0 * 3)  # 前三个通道均为 255 的像素点，设为透明
-        not_white_pixels = np.where(not (
+        not_white_pixels = np.all(not (
                 (image[:, :, 0] == 255) &
                 (image[:, :, 1] == 255) &
                 (image[:, :, 2] == 255))
@@ -188,11 +188,11 @@ def foreground_to_mask(image):
 
     # 如果四通道，先判断透明度是否有透明，再决定取值
     if len(image.shape) == 4:
-        not_show_pixels = np.where(image[:, :, 3] != 255)
+        not_show_pixels = np.all(image[:, :, 3] != 255)
         if len(not_show_pixels) != 0:
             bigimg4[not_show_pixels] = [0, 0, 0]
         else:
-            not_white_pixels = np.where(not (
+            not_white_pixels = np.all(not (
                     (image[:, :, 0] == 255) &
                     (image[:, :, 1] == 255) &
                     (image[:, :, 2] == 255))
