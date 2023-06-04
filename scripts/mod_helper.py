@@ -177,29 +177,34 @@ def foreground_to_mask(image):
     # 如果三通道，就取白色
     # bigimg4 = np.ones((image.shape[0], image.shape[1], 3))
     bigimg4 = np.zeros((image.shape[0], image.shape[1], 3), dtype=np.uint8)
+    height, width, channels = image.shape
 
-    if len(image.shape) == 3:
+    if channels == 3:
         # not_white_pixels = np.where(not np.sum(image, axis=2) == 255 * 3)  # 前三个通道均为 255 的像素点，设为黑色
-        not_white_pixels = np.where(not (
-                (image[:, :, 0] == 255) &
-                (image[:, :, 1] == 255) &
-                (image[:, :, 2] == 255)).all())
-        # set those pixels to black
-        bigimg4[not_white_pixels] = [0, 0, 0]
+        # not_white_pixels = np.where(not (
+        #         (image[:, :, 0] == 255) &
+        #         (image[:, :, 1] == 255) &
+        #         (image[:, :, 2] == 255)).all())
+        # # set those pixels to black
+        # bigimg4[not_white_pixels] = [0, 0, 0]
+        bigimg4[:, :, :] = image
+        for i in range(height):
+            for j in range(width):
+                if image[i, j, :].tolist() != [255.0, 255.0, 255.0]:
+                    bigimg4[i, j, :] = np.array([0, 0, 0])
 
     # 如果四通道，先判断透明度是否有透明，再决定取值
-    if len(image.shape) == 4:
+    if channels == 4:
         not_show_pixels = np.where(image[:, :, 3] != 255)
         if len(not_show_pixels) != 0:
             bigimg4[not_show_pixels] = [0, 0, 0]
         else:
-            not_white_pixels = np.where(not np.sum(image, axis=2) == 255 * 3)  # 前三个通道均为 255 的像素点，设为黑色
-
-            not_white_pixels = np.where(not (
-                    (image[:, :, 0] == 255) &
-                    (image[:, :, 1] == 255) &
-                    (image[:, :, 2] == 255)).all())
-            bigimg4[not_white_pixels] = [0, 0, 0]
+            height, width, channels = image.shape
+            bigimg4[:, :, :] = image
+            for i in range(height):
+                for j in range(width):
+                    if image[i, j, :].tolist() != [255.0, 255.0, 255.0]:
+                        bigimg4[i, j, :] = np.array([0, 0, 0])
 
         # for x, y in zip(xs, ys):
         #   bigimg4[x, y] = [255, 255, 255]
