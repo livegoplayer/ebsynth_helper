@@ -118,9 +118,14 @@ def adjust_mask(mainPreImagePath, preSubImagePath, adjustmentImagePath, output_d
 
 def generate_sub_by_foreground_img(imgPath, mainImgPath, subOutputPath):
     img = cv2.imread(imgPath)
-    mainImg = cv2.imread(mainImgPath)
     imgMask = foreground_to_mask(img)
-    mainMask = foreground_to_mask(mainImg)
+
+    if not os.path.exists(mainImgPath):
+        mainImg = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint8)
+        mainMask = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint8)
+    else:
+        mainImg = cv2.imread(mainImgPath)
+        mainMask = foreground_to_mask(mainImg)
 
     imgPathDir, filename = os.path.split(imgPath)
     imgMaskDir = os.path.join(imgPathDir, "mask")
