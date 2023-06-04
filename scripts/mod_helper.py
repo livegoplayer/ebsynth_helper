@@ -10,8 +10,7 @@ def infer2(img_path: str, mask_path: str = '', out_img_path: str = ''):
     img1 = cv2.imread(img_path, -1)
     img2 = cv2.imread(mask_path, -1)
     # 反转
-    matrix = 255 - np.asarray(img2)
-    image = cv2.add(img1, matrix)
+    image = cutout_by_mask(img1, img2)
 
     save(out_img_path, to_transparent(image))
 
@@ -22,8 +21,8 @@ def split_by_mask(img_path: str, mask_path: str = '', output_dir: str = ''):
     img2 = cv2.imread(mask_path, -1)
     # 反转
     matrix = 255 - np.asarray(img2)
-    mainImage = cv2.add(img1, matrix)
-    subImage = cv2.add(img1, img2)
+    mainImage = cutout_by_mask(img1, img2)
+    subImage = cutout_by_mask(img1, matrix)
 
     mainImagePath = os.path.join(output_dir, "main_image")
     subImagePath = os.path.join(output_dir, "sub_image")
@@ -162,8 +161,7 @@ def generate_sub_by_foreground_img(imgPath, mainImgPath, subOutputPath):
         subOutputImg = img
     else:
         # main 反过来，然后使用main的反遮罩取raw的mask
-        matrix = 255 - np.asarray(mainMask)
-        subOutputImg = cv2.add(img, matrix)
+        subOutputImg = cutout_by_mask(img, mainMask)
 
     subOutputImgMask = foreground_to_mask(subOutputImg)
 
@@ -172,6 +170,26 @@ def generate_sub_by_foreground_img(imgPath, mainImgPath, subOutputPath):
     save(subOutputPath, subOutputImg)
     save(subMaskDirPath, subOutputImgMask)
 
+def cutout_by_mask(image, mask):
+    # 如果三通道，就取白色
+    # bigimg4 = np.ones((image.shape[0], image.shape[1], 3))
+    bigimg4 = np.zeros((image.shape[0], image.shape[1], 4), dtype=np.uint8)
+    height, width, channels = mask.shape
+    # 黑白遮罩
+    if channels == 3:
+        bigimg4[:, :, :3] = image
+        for i in range(height):
+            for j in range(width):
+                if mask[i, j].tolist() != [255.0, 255.0, 255.0]:
+                    bigimg4[i, j, 3] = 255
+
+    # 透明遮罩
+    if channels == 4:
+        bigimg4[:, :, :3] = image
+        for i in range(height):
+            for j in range(width):
+                if mask[i, j, 3] == 0:
+                    bigimg4[i, j, 3] = 255
 
 def foreground_to_mask(image):
     # 如果三通道，就取白色
