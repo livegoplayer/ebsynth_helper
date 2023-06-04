@@ -7,8 +7,8 @@ import os
 
 def infer2(img_path: str, mask_path: str = '', out_img_path: str = ''):
     # 使用opencv叠加图片
-    img1 = cv2.imread(img_path)
-    img2 = cv2.imread(mask_path)
+    img1 = cv2.imread(img_path, -1)
+    img2 = cv2.imread(mask_path, -1)
     # 反转
     matrix = 255 - np.asarray(img2)
     image = cv2.add(img1, matrix)
@@ -18,8 +18,8 @@ def infer2(img_path: str, mask_path: str = '', out_img_path: str = ''):
 
 def split_by_mask(img_path: str, mask_path: str = '', output_dir: str = ''):
     # 使用opencv叠加图片
-    img1 = cv2.imread(img_path)
-    img2 = cv2.imread(mask_path)
+    img1 = cv2.imread(img_path, -1)
+    img2 = cv2.imread(mask_path, -1)
     # 反转
     matrix = 255 - np.asarray(img2)
     mainImage = cv2.add(img1, matrix)
@@ -55,9 +55,9 @@ def to_transparent(image):
 
 
 def adjust_mask(mainPreImagePath, preSubImagePath, adjustmentImagePath, output_dir):
-    mainPreImage = cv2.imread(mainPreImagePath)
-    preSubImage = cv2.imread(preSubImagePath)
-    adjustmentImage = cv2.imread(adjustmentImagePath)
+    mainPreImage = cv2.imread(mainPreImagePath, -1)
+    preSubImage = cv2.imread(preSubImagePath, -1)
+    adjustmentImage = cv2.imread(adjustmentImagePath, -1)
 
     # 校验
     height = adjustmentImage.shape[0]  # 将tuple中的元素取出，赋值给height，width，channels
@@ -117,14 +117,14 @@ def adjust_mask(mainPreImagePath, preSubImagePath, adjustmentImagePath, output_d
 
 
 def generate_sub_by_foreground_img(imgPath, mainImgPath, subOutputPath):
-    img = cv2.imread(imgPath)
+    img = cv2.imread(imgPath, -1)
     imgMask = foreground_to_mask(img)
 
     if not os.path.exists(mainImgPath):
         mainImg = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint8)
         mainMask = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint8)
     else:
-        mainImg = cv2.imread(mainImgPath)
+        mainImg = cv2.imread(mainImgPath, -1)
         mainMask = foreground_to_mask(mainImg)
 
     imgPathDir, filename = os.path.split(imgPath)
