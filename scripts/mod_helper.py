@@ -187,24 +187,20 @@ def foreground_to_mask(image):
         #         (image[:, :, 2] == 255)).all())
         # # set those pixels to black
         # bigimg4[not_white_pixels] = [0, 0, 0]
-        bigimg4[:, :, :] = image
-        for i in range(height):
-            for j in range(width):
-                if image[i, j, :].tolist() != [255.0, 255.0, 255.0]:
-                    bigimg4[i, j, :] = np.array([0, 0, 0])
+        not_white_pixels = np.where(
+            image[:, :, 0] == 255 and image[:, :, 1] == 255 and image[:, :, 2] == 255)  # 前三个通道均为 255 的像素点，设为黑色
+        bigimg4[not_white_pixels] = [0, 0, 0]
 
     # 如果四通道，先判断透明度是否有透明，再决定取值
     if channels == 4:
         not_show_pixels = np.where(image[:, :, 3] != 255)
-        if len(not_show_pixels) != 0:
+        if len(list(not_show_pixels)) >= 0 and len(list(not_show_pixels)[0]) > 0:
             bigimg4[not_show_pixels] = [0, 0, 0]
         else:
-            height, width, channels = image.shape
-            bigimg4[:, :, :] = image
-            for i in range(height):
-                for j in range(width):
-                    if image[i, j, :].tolist() != [255.0, 255.0, 255.0]:
-                        bigimg4[i, j, :] = np.array([0, 0, 0])
+            bigimg4[:, :, :] = image[:, :, :3]
+            not_white_pixels = np.where(image[:, :, 0] == 255 and image[:, :, 1] == 255 and image[:, :, 2] == 255)  # 前三个通道均为 255 的像素点，设为黑色
+            bigimg4[not_white_pixels] = [0, 0, 0]
+
 
         # for x, y in zip(xs, ys):
         #   bigimg4[x, y] = [255, 255, 255]

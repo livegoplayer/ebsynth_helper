@@ -63,14 +63,7 @@
       <workItem from="1685782381290" duration="225000" />
       <workItem from="1685789526244" duration="4197000" />
       <workItem from="1685839177225" duration="14260000" />
-      <workItem from="1685877817528" duration="7361000" />
-    </task>
-    <task id="LOCAL-00021" summary="1">
-      <created>1684492382435</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1684492382435</updated>
+      <workItem from="1685877817528" duration="9018000" />
     </task>
     <task id="LOCAL-00022" summary="1">
       <created>1684492874463</created>
@@ -408,7 +401,14 @@
       <option name="project" value="LOCAL" />
       <updated>1685884341245</updated>
     </task>
-    <option name="localTasksCounter" value="70" />
+    <task id="LOCAL-00070" summary="添加人像mask">
+      <created>1685885880024</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1685885880024</updated>
+    </task>
+    <option name="localTasksCounter" value="71" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
